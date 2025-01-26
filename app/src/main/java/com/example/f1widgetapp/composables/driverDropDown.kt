@@ -1,5 +1,6 @@
 package com.example.f1widgetapp.composables
 
+import com.example.f1widgetapp.data.modals.Driver
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -12,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import com.example.f1widgetapp.data.modals.Driver
 
 @Composable
 fun DriverDropDown(
@@ -36,12 +36,10 @@ fun DriverDropDown(
         ) {
             drivers.forEach { driver ->
                 DropdownMenuItem(
+                    text = { Text(driver.fullName) },
                     onClick = {
                         onDriverSelected(driver)
                         expanded = false
-                    },
-                    text = {
-                        Text(text = driver.fullName)
                     }
                 )
             }

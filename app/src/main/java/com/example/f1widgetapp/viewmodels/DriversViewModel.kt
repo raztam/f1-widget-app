@@ -20,4 +20,14 @@ class DriversViewModel(
             _driversState.value = fetchedDrivers
         }
     }
+
+    // Save the selected driver׳s number to shared preferences
+    fun saveSelectedDriver(driver: Driver) {
+        repository.saveSelectedDriverNumber(driver.driverNumber)
+    }
+
+    // Get the selected driver׳s number from shared preferences
+    fun getSelectedDriver(): Int? {
+        return repository.getSelectedDriverNumber()
+    }
 }

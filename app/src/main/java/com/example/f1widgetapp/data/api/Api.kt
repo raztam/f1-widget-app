@@ -17,11 +17,8 @@ class Api : ApiInterface  {
 
     override suspend fun getDrivers(): List<Driver> {
         return try {
-            Log.d("F1AppTests", "Fetching drivers from API")
             api.getDrivers()
         } catch (e: Exception) {
-            // Log the exception for debugging
-            Log.e("F1AppTests", "Error fetching drivers", e)
             emptyList()
         }
     }

@@ -6,4 +6,7 @@ import com.example.f1widgetapp.data.modals.Driver
 interface RepositoryInterface {
     suspend fun getAllDrivers(): List<Driver>
     suspend fun upsertDrivers(): List<Driver>
+    fun saveSelectedDriverNumber(driverNumber: Int)
+    fun getSelectedDriverNumber(): Int?
+
 }

@@ -13,14 +13,14 @@ data class Driver(
     @SerializedName("full_name")
     val fullName:String,
     @SerializedName("name_acronym")
-    val nameAcronym:String,
+    val nameAcronym:String?,
     @SerializedName("team_name")
-    val teamName:String,
+    val teamName:String?,
     @SerializedName("team_colour")
-    val teamColour:String,
+    val teamColour:String?,
     @SerializedName("headshot_url")
-    val headshotUrl:String,
+    val headshotUrl:String?,
     @SerializedName("country_code")
-    val countryCode:String,
+    val countryCode:String?,
     @SerializedName("session_key")
     val sessionKey:Int)

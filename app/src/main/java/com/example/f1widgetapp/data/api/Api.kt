@@ -9,7 +9,7 @@ class Api : ApiInterface  {
 
     private val api: F1InfoApi by lazy {
         Retrofit.Builder()
-            .baseUrl("https://api.openf1.org/v1/")
+            .baseUrl("https://api.jolpi.ca/ergast/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(F1InfoApi::class.java)
@@ -17,13 +17,12 @@ class Api : ApiInterface  {
 
     override suspend fun getDrivers(): List<Driver> {
         return try {
-            api.getDrivers()
+            val drivers =  api.getDrivers().mrData.driverTable.drivers
+            drivers
         } catch (e: Exception) {
             emptyList()
         }
     }
 
-    override suspend fun getDriverById(id: Int): Driver? {
-        TODO("Not yet implemented")
-    }
+
 }

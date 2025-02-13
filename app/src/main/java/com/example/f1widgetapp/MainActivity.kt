@@ -44,8 +44,8 @@ class MainActivity : ComponentActivity() {
             val repository = remember { Repository(driverDao = db.driverDao(), remoteDataSource = Api(),context = context) }
             val driversViewModel = DriversViewModel(repository)
             val drivers = driversViewModel.driversState.collectAsState()
-            var selectedDriver = remember { mutableStateOf<Driver?>(null) }
-            var savedDriver by remember { mutableStateOf<Int?>(null) }
+            val selectedDriver = remember { mutableStateOf<Driver?>(null) }
+            var savedDriver by remember { mutableStateOf<String?>(null) }
 
             LaunchedEffect(Unit) { // run once
                 driversViewModel.fetchDrivers()

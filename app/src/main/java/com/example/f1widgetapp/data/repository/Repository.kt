@@ -24,17 +24,21 @@ class Repository(
         return remoteDrivers
     }
 
-    override fun saveSelectedDriverNumber(driverNumber: Int) {
+    override suspend fun getDriverByNumber(number: String): Driver? {
+        return driverDao.getDriverByNumber(number)
+    }
+
+    override fun saveSelectedDriverNumber(driverNumber: String) {
         context.getSharedPreferences("f1_prefs", Context.MODE_PRIVATE)
             .edit()
-            .putInt("selected_driver_number", driverNumber)
+            .putString("selected_driver_number", driverNumber)
             .apply()
     }
 
-    override fun getSelectedDriverNumber(): Int? {
+    override fun getSelectedDriverNumber(): String? {
         val sharedPreferences = context.getSharedPreferences("f1_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("selected_driver_number", -1).let {
-            if (it == -1) null else it
+        return sharedPreferences.getString("selected_driver_number", "").let {
+            if (it == "") null else it
         }
     }
 }

@@ -6,21 +6,17 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "drivers")
 data class Driver(
-
-    @SerializedName("driver_number")
     @PrimaryKey
-    val driverNumber: Int,
-    @SerializedName("full_name")
-    val fullName:String,
-    @SerializedName("name_acronym")
-    val nameAcronym:String?,
-    @SerializedName("team_name")
+    val driverId: String,
+    val givenName: String?,
+    val familyName: String?,
+    @SerializedName("permanentNumber")
+    val driverNumber: String,
+    val code:String?,
     val teamName:String?,
-    @SerializedName("team_colour")
     val teamColour:String?,
-    @SerializedName("headshot_url")
-    val headshotUrl:String?,
-    @SerializedName("country_code")
-    val countryCode:String?,
-    @SerializedName("session_key")
-    val sessionKey:Int)
+    val nationality:String?
+) {
+    val fullName: String
+        get() = "${givenName ?: ""} ${familyName ?: ""}".trim()
+}

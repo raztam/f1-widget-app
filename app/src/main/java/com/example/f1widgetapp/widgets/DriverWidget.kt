@@ -2,6 +2,7 @@ package com.example.f1widgetapp.widgets
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceComposable
 import androidx.glance.GlanceId
@@ -15,45 +16,32 @@ import androidx.glance.layout.*
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import androidx.glance.color.ColorProviders
+import com.example.f1widgetapp.composables.DriverCard
+import com.example.f1widgetapp.data.api.Api
+import com.example.f1widgetapp.data.modals.Driver
+import com.example.f1widgetapp.data.repository.Repository
+import com.example.f1widgetapp.data.room.AppDatabase
 
 
 object DriverWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        // Initialize database and repository.
+        val db = AppDatabase.getDatabase(context)
+        val repository = Repository(driverDao = db.driverDao(), remoteDataSource = Api(), context = context)
+
+        // Fetch the selected driver before providing content
+        val selectedDriver = repository.getSelectedDriver()
+
         provideContent {
-            DriverWidgetContent()
+            DriverWidgetContent(selectedDriver)
         }
     }
 }
 
 
 @Composable
-fun DriverWidgetContent() {
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(GlanceTheme.colors.surface) // Uses theme color instead
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = GlanceModifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Hello, Driver!",
-                style = androidx.glance.text.TextStyle(
-                    color = GlanceTheme.colors.onSurface // Uses theme-based text color
-                )
-            )
-            Spacer(modifier = GlanceModifier.height(8.dp))
-            Text(
-                text = "Your trip starts soon.",
-                style = androidx.glance.text.TextStyle(
-                    color = GlanceTheme.colors.secondary // Another theme-based color
-                )
-            )
-        }
-    }
+fun DriverWidgetContent(driver: Driver?) {
+    DriverCard(driver)
 }
 class DriverWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget

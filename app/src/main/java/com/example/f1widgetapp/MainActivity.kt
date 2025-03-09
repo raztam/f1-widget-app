@@ -45,19 +45,10 @@ class MainActivity : ComponentActivity() {
             val driversViewModel = DriversViewModel(repository)
             val drivers = driversViewModel.driversState.collectAsState()
             val selectedDriver = remember { mutableStateOf<Driver?>(null) }
-            var savedDriver by remember { mutableStateOf<String?>(null) }
 
             LaunchedEffect(Unit) { // run once
                 driversViewModel.fetchDrivers()
-                savedDriver = driversViewModel.getSelectedDriver()
-
-                // Observe changes to the drivers list
-                snapshotFlow { drivers.value }
-                    .collect { driversList ->
-                        if (savedDriver != null && driversList.isNotEmpty()) {
-                            selectedDriver.value = driversList.find { it.driverNumber == savedDriver }
-                        }
-                    }
+                selectedDriver.value = driversViewModel.getSelectedDriver()
             }
 
 

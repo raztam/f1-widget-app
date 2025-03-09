@@ -29,7 +29,7 @@ class DriversViewModel(
     }
 
     // Get the selected driver׳s number from shared preferences
-    fun getSelectedDriver(): String? {
-        return repository.getSelectedDriverNumber()
+    suspend fun getSelectedDriver(): Driver? {
+        return repository.getSelectedDriver()
     }
 }

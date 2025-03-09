@@ -10,6 +10,6 @@ interface RepositoryInterface {
 
 
     fun saveSelectedDriverNumber(driverNumber: String)
-    fun getSelectedDriverNumber(): String?
+    suspend  fun getSelectedDriver(): Driver?
 
 }

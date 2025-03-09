@@ -35,10 +35,13 @@ class Repository(
             .apply()
     }
 
-    override fun getSelectedDriverNumber(): String? {
+    override suspend fun getSelectedDriver(): Driver? {
         val sharedPreferences = context.getSharedPreferences("f1_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("selected_driver_number", "").let {
-            if (it == "") null else it
+        val selectedNumber = sharedPreferences.getString("selected_driver_number", "")
+        return if (selectedNumber.isNullOrEmpty()) {
+            null
+        } else {
+            getDriverByNumber(selectedNumber)
         }
     }
 }

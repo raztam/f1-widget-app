@@ -10,11 +10,14 @@ data class Driver(
     val driverId: String,
     val givenName: String?,
     val familyName: String?,
+    val imageUrl: String?,
     @SerializedName("permanentNumber")
     val driverNumber: String,
+    val score: String?,
+    val position: String?,
     val code:String?,
     val teamName:String?,
-    val teamColour:String?,
+    val teamColor:String?,
     val nationality:String?
 ) {
     val fullName: String

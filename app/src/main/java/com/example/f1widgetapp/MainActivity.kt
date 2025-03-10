@@ -33,16 +33,14 @@ import com.example.f1widgetapp.composables.DriverDropDown
 import com.example.f1widgetapp.data.api.Api
 import com.example.f1widgetapp.data.repository.Repository
 import com.example.f1widgetapp.viewmodels.DriversViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val context = LocalContext.current
-            val db = remember { AppDatabase.getDatabase(context) }
-            val repository = remember { Repository(driverDao = db.driverDao(), remoteDataSource = Api(),context = context) }
-            val driversViewModel = DriversViewModel(repository)
+            val driversViewModel: DriversViewModel = koinViewModel()
             val drivers = driversViewModel.driversState.collectAsState()
             val selectedDriver = remember { mutableStateOf<Driver?>(null) }
 

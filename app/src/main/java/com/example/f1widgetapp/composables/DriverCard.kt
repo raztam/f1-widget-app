@@ -29,7 +29,7 @@ fun DriverCard(
     driver: Driver?,
 ) {
     val modifiedDriver = driver?.copy(
-        score = "25",
+        score = "437",
         position = "1"
     )
 
@@ -52,25 +52,21 @@ fun DriverCard(
                 .padding(bottom = 0.dp),
             horizontalAlignment = androidx.glance.layout.Alignment.End
             ) {
-                Text(
+                GlanceText(
                     text = "P${modifiedDriver?.position ?: "-"}",
-                    style = TextStyle(
-                    color = androidx.glance.unit.ColorProvider(Color.White),
+                    font = R.font.inter_24pt_extrabold,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif
-                    )
+                    color = Color.White
                 )
                 Spacer(modifier = GlanceModifier.width(4.dp))
-                Text(
-                    text = modifiedDriver?.score ?: "0",
-                    style = TextStyle(
-                    color = androidx.glance.unit.ColorProvider(modifiedDriver?.teamColorCompose ?: Color.White),
+                GlanceText(
+                    text = modifiedDriver?.score ?: "",
+                    font = R.font.inter_24pt_extrabold,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif
-                    )
+                    color = driver?.teamColorCompose ?: Color.White
+
                 )
+
             }
         }
 
@@ -111,23 +107,17 @@ fun DriverCard(
             horizontalAlignment = androidx.glance.layout.Alignment.Start,
             verticalAlignment = androidx.glance.layout.Alignment.Bottom
         ) {
-            Text(
-                text = modifiedDriver?.givenName ?: "",
-                style = TextStyle(
-                    color = androidx.glance.unit.ColorProvider(Color.White),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = FontFamily.SansSerif
-                )
+            GlanceText(
+                driver?.givenName ?: "",
+                font = R.font.inter_24pt_regular,
+                fontSize = 20.sp,
+                color = Color.White
             )
-            Text(
-                text = modifiedDriver?.familyName ?: "",
-                style = TextStyle(
-                    color = androidx.glance.unit.ColorProvider(Color.White),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif
-                )
+            GlanceText(
+                text = driver?.familyName ?: "",
+                font = R.font.inter_24pt_extrabold,
+                fontSize = 20.sp,
+                color = Color.White
             )
         }
     }

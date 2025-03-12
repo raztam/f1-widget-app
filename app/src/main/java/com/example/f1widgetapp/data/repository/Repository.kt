@@ -37,11 +37,18 @@ class Repository(
 
     override suspend fun getSelectedDriver(): Driver? {
         val sharedPreferences = context.getSharedPreferences("f1_prefs", Context.MODE_PRIVATE)
-        val selectedNumber = sharedPreferences.getString("selected_driver_number", "")
-        return if (selectedNumber.isNullOrEmpty()) {
-            null
-        } else {
-            getDriverByNumber(selectedNumber)
+        try {
+            val selectedNumber = sharedPreferences.getString("selected_driver_number", "")
+            if (selectedNumber.isNullOrEmpty()) {
+                return null
+            }
+            return getDriverByNumber(selectedNumber)
+        } catch (e: Exception) {
+            val intValue = sharedPreferences.getInt("selected_driver_number", -1)
+            if (intValue != -1) {
+                return getDriverByNumber(intValue.toString())
+            }
+            return null
         }
     }
 }

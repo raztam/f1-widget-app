@@ -15,4 +15,7 @@ interface DriverDao {
 
     @Query("SELECT * FROM drivers WHERE driverNumber = :number")
     suspend fun getDriverByNumber(number: String): Driver?
+
+    @Query("UPDATE drivers SET position = :position, score = :points WHERE driverId = :driverId")
+    suspend fun updateDriverStandings(driverId: String, position: String, points: String)
 }

@@ -1,5 +1,6 @@
 package com.example.f1widgetapp.composables
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -21,76 +22,54 @@ import androidx.glance.text.FontWeight
 import com.example.f1widgetapp.data.modals.Driver
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.text.FontFamily
 import com.example.f1widgetapp.R
+
+fun Context.getDrawableId(imageName: String): Int {
+    return resources.getIdentifier(imageName, "drawable", packageName)
+}
 
 @Composable
 fun DriverCard(
     driver: Driver?,
+    context: Context = LocalContext.current
 ) {
-    val modifiedDriver = driver?.copy(
-        score = "437",
-        position = "1"
-    )
+
+    // Get driver image
+    val drawableId = try {
+     val id = context.getDrawableId(driver?.driverId ?: "default_image")
+        if (id == 0) null else id
+    } catch (e: Exception) {
+        null
+    }
 
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(androidx.glance.unit.ColorProvider(Color(0xE6708090)))
-            .padding(start = 6.dp, end = 4.dp, top = 8.dp),
-        contentAlignment = androidx.glance.layout.Alignment.Center
+            .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+        contentAlignment = androidx.glance.layout.Alignment.TopCenter  // Changed to TopCenter
     ) {
-        // Position and score
-        Box(
-            modifier = GlanceModifier
-            .fillMaxSize()
-            .padding(end = 12.dp),
-            contentAlignment = androidx.glance.layout.Alignment.BottomEnd
-        ) {
-            Row(
-            modifier = GlanceModifier
-                .padding(bottom = 0.dp),
-            horizontalAlignment = androidx.glance.layout.Alignment.End
-            ) {
-                GlanceText(
-                    text = "P${modifiedDriver?.position ?: "-"}",
-                    font = R.font.inter_24pt_extrabold,
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
-                Spacer(modifier = GlanceModifier.width(4.dp))
-                GlanceText(
-                    text = modifiedDriver?.score ?: "",
-                    font = R.font.inter_24pt_extrabold,
-                    fontSize = 20.sp,
-                    color = driver?.teamColorCompose ?: Color.White
-
-                )
-
-            }
-        }
-
-        // Driver Image with shadow
-        driver?.driverId?.let { driverId ->
+        // Driver Image with shadow - on the right
+        if (drawableId != null) {
             Box(
                 modifier = GlanceModifier
                     .fillMaxSize()
-                    .padding(start = (-4).dp),
-                contentAlignment = androidx.glance.layout.Alignment.BottomStart
+                    .padding(end = 12.dp),
+                contentAlignment = androidx.glance.layout.Alignment.BottomEnd
             ) {
-
                 Image(
-                    provider = ImageProvider(R.drawable.max_verstappen),
+                    provider = ImageProvider(drawableId),
                     contentDescription = null,
                     modifier = GlanceModifier
                         .width(82.dp)
                         .height(82.dp)
-                        .padding(start = 2.dp, top = 2.dp)
                 )
 
                 // Main image layer
                 Image(
-                    provider = ImageProvider(R.drawable.max_verstappen),
+                    provider = ImageProvider(drawableId),
                     contentDescription = "Driver photo",
                     modifier = GlanceModifier
                         .width(82.dp)
@@ -99,13 +78,13 @@ fun DriverCard(
             }
         }
 
-        // Driver name
+        // Driver name - centered
         Column(
             modifier = GlanceModifier
                 .fillMaxWidth()
-                .padding(start = 78.dp, bottom = 36.dp),
-            horizontalAlignment = androidx.glance.layout.Alignment.Start,
-            verticalAlignment = androidx.glance.layout.Alignment.Bottom
+                .padding(top = 2.dp, start = 65.dp),
+            horizontalAlignment = androidx.glance.layout.Alignment.Start,  // Changed to Start alignment
+            verticalAlignment = androidx.glance.layout.Alignment.Top  // Changed to Top alignment
         ) {
             GlanceText(
                 driver?.givenName ?: "",
@@ -119,6 +98,33 @@ fun DriverCard(
                 fontSize = 20.sp,
                 color = Color.White
             )
+        }
+
+        // Position and score
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize(),
+            contentAlignment = androidx.glance.layout.Alignment.BottomStart
+        ) {
+            Row(
+                modifier = GlanceModifier
+                    .padding(start = 4.dp),
+                horizontalAlignment = androidx.glance.layout.Alignment.Start
+            ) {
+                GlanceText(
+                    text = "P${driver?.position ?: "-"}",
+                    font = R.font.inter_24pt_extrabold,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = GlanceModifier.width(4.dp))
+                GlanceText(
+                    text = driver?.score ?: "",
+                    font = R.font.inter_24pt_extrabold,
+                    fontSize = 20.sp,
+                    color = driver?.teamColorCompose ?: Color.White
+                )
+            }
         }
     }
 }

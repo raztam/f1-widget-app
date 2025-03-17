@@ -8,6 +8,8 @@ interface RepositoryInterface {
     suspend fun upsertDrivers(): List<Driver>
     suspend fun getDriverByNumber(number: String): Driver?
 
+    suspend fun updateDriverStandings()
+
 
     fun saveSelectedDriverNumber(driverNumber: String)
     suspend  fun getSelectedDriver(): Driver?

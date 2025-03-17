@@ -21,7 +21,20 @@ class Repository(
     override suspend fun upsertDrivers(): List<Driver> {
         val remoteDrivers = remoteDataSource.getDrivers()
         driverDao.upsertDrivers(remoteDrivers)
+        updateDriverStandings()
         return remoteDrivers
+    }
+
+    override suspend fun updateDriverStandings() {
+        val standings = remoteDataSource.getDriversStandings()
+        Log.d("Repository", "Updating driver standings: $standings")
+        standings.forEach { update ->
+            driverDao.updateDriverStandings(
+                driverId = update.driverId,
+                position = update.position,
+                points = update.points
+            )
+        }
     }
 
     override suspend fun getDriverByNumber(number: String): Driver? {

@@ -6,4 +6,8 @@ import retrofit2.http.GET
 interface F1InfoApi {
     @GET("f1/current/drivers")
     suspend fun getDrivers(): ErgastResponse
+
+    @GET("f1/current/driverstandings")
+    suspend fun getDriverStandings(): ErgastResponse
+
 }

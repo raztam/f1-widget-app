@@ -11,7 +11,6 @@ data class Driver(
     val driverId: String,
     val givenName: String?,
     val familyName: String?,
-    val imageUrl: String?,
     @SerializedName("permanentNumber")
     val driverNumber: String,
     val score: String?,

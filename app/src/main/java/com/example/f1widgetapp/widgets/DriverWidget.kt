@@ -9,6 +9,7 @@ import androidx.glance.appwidget.provideContent
 import com.example.f1widgetapp.composables.DriverCard
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.repository.RepositoryInterface
+import com.example.f1widgetapp.workers.UpdateWidgetsWorker
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -32,4 +33,10 @@ fun DriverWidgetContent(driver: Driver?) {
 class DriverWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
         get() = DriverWidget
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        // Schedule updates when widget is added to home screen
+        UpdateWidgetsWorker.schedule(context)
+    }
 }

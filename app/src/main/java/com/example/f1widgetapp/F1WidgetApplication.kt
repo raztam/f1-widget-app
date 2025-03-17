@@ -2,6 +2,7 @@ package com.example.f1widgetapp
 
 import android.app.Application
 import com.example.f1widgetapp.di.appModule
+import com.example.f1widgetapp.workers.UpdateWidgetsWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -16,5 +17,8 @@ class F1WidgetApplication : Application() {
             androidContext(this@F1WidgetApplication)
             modules(appModule)
         }
+
+        // Schedule background updates for widgets
+        UpdateWidgetsWorker.schedule(applicationContext)
     }
 }

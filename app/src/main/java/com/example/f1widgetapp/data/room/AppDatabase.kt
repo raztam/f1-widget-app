@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.f1widgetapp.data.modals.Driver
 
 
-@Database(entities = [Driver::class], version = 7)
+@Database(entities = [Driver::class], version = 8)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun driverDao(): DriverDao
 

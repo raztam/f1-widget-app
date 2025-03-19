@@ -1,7 +1,6 @@
-package com.example.f1widgetapp
+package com.example.f1widgetapp.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,28 +13,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.f1widgetapp.data.modals.Driver
-import com.example.f1widgetapp.data.room.AppDatabase
 import com.example.f1widgetapp.ui.theme.F1WidgetAppTheme
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.f1widgetapp.composables.DriverDropDown
-import com.example.f1widgetapp.data.api.Api
-import com.example.f1widgetapp.data.repository.Repository
 import com.example.f1widgetapp.viewmodels.DriversViewModel
 import org.koin.androidx.compose.koinViewModel
 
-class MainActivity : ComponentActivity() {
+class DriverWidgetSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,8 +39,6 @@ class MainActivity : ComponentActivity() {
                 selectedDriver.value = driversViewModel.getSelectedDriver()
             }
 
-
-
             F1WidgetAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier
@@ -61,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         Text(
-                            text = "Select your favorite driver",
+                            text = "Select driver for widget",
                             modifier = Modifier.padding(16.dp)
                         )
 
@@ -73,10 +61,25 @@ class MainActivity : ComponentActivity() {
                                 driversViewModel.saveSelectedDriver(driver)
                             }
                         )
-
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    F1WidgetAppTheme {
+        Greeting("Android")
     }
 }

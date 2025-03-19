@@ -42,12 +42,12 @@ class Api : ApiInterface, KoinComponent {
             standingsList.driverStandings.map { standing ->
                 DriverStandingUpdate(
                     driverId = standing.driver.driverId,
-                    position = standing.position,
-                    points = standing.points
+                    position = standing.position ?: "DNF",
+                    points =  standing.points ?: "0"
                 )
             }
         } catch (e: Exception) {
-            Log.e("Api", "Error fetching driver standings", e)
+            Log.e("F1Api", "Error fetching driver standings", e)
             emptyList()
         }
     }

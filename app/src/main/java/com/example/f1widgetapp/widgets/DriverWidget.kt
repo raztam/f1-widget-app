@@ -1,11 +1,17 @@
 package com.example.f1widgetapp.widgets
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceId
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
+import androidx.glance.GlanceModifier
+import com.example.f1widgetapp.activities.DriverWidgetSettingsActivity
 import com.example.f1widgetapp.composables.DriverCard
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.repository.RepositoryInterface
@@ -19,15 +25,23 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val selectedDriver = repository.getSelectedDriver()
 
+        val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java)
+
         provideContent {
-            DriverWidgetContent(selectedDriver)
+            DriverWidgetContent(
+                driver = selectedDriver,
+                onClick = actionStartActivity(settingsIntent)
+            )
         }
     }
 }
 
 @Composable
-fun DriverWidgetContent(driver: Driver?) {
-    DriverCard(driver)
+fun DriverWidgetContent(driver: Driver?, onClick: Action) {
+    DriverCard(
+        driver = driver,
+        modifier = GlanceModifier.clickable(onClick)
+    )
 }
 
 class DriverWidgetReceiver : GlanceAppWidgetReceiver() {

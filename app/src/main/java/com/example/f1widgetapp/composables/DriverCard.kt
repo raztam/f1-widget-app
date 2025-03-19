@@ -26,6 +26,7 @@ import androidx.glance.LocalContext
 import androidx.glance.text.FontFamily
 import com.example.f1widgetapp.R
 
+
 fun Context.getDrawableId(imageName: String): Int {
     return resources.getIdentifier(imageName, "drawable", packageName)
 }
@@ -33,7 +34,8 @@ fun Context.getDrawableId(imageName: String): Int {
 @Composable
 fun DriverCard(
     driver: Driver?,
-    context: Context = LocalContext.current
+    context: Context = LocalContext.current,
+    modifier: GlanceModifier = GlanceModifier
 ) {
 
     // Get driver image
@@ -45,7 +47,7 @@ fun DriverCard(
     }
 
     Box(
-        modifier = GlanceModifier
+        modifier = modifier
             .fillMaxSize()
             .background(androidx.glance.unit.ColorProvider(Color(0xE6708090)))
             .padding(top = 8.dp, start = 8.dp, end = 8.dp),

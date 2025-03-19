@@ -1,9 +1,13 @@
 package com.example.f1widgetapp.viewmodels
 
+import android.content.Context
+import android.util.Log
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.repository.RepositoryInterface
+import com.example.f1widgetapp.widgets.DriverWidget
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,15 +25,28 @@ class DriversViewModel(
         }
     }
 
-    // Save the selected driver׳s number to shared preferences
-    fun saveSelectedDriver(driver: Driver) {
-        repository.saveSelectedDriverNumber(driver.driverNumber)
+    fun saveDriverForWidget(driver: Driver, widgetId: Int, context: Context?) {
+        repository.saveDriverForWidget(driver.driverNumber, widgetId)
 
-
+        context?.let { ctx ->
+            updateWidget(ctx, widgetId)
+        }
     }
 
-    // Get the selected driver׳s number from shared preferences
-    suspend fun getSelectedDriver(): Driver? {
-        return repository.getSelectedDriver()
+    suspend fun getDriverForWidget(widgetId: Int): Driver? {
+        return repository.getDriverForWidget(widgetId)
+    }
+
+    private fun updateWidget(context: Context, widgetId: Int) {
+        viewModelScope.launch {
+            val manager = GlanceAppWidgetManager(context)
+            val glanceIds = manager.getGlanceIds(DriverWidget::class.java)
+
+            // Find the matching widget ID and update it
+            glanceIds.find { manager.getAppWidgetId(it) == widgetId }?.let { glanceId ->
+                Log.d("MyDriversViewModel", "Updating widget with ID: $widgetId")
+                DriverWidget.update(context, glanceId)
+            }
+        }
     }
 }

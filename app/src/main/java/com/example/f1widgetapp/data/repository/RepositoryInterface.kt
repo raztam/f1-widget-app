@@ -11,7 +11,7 @@ interface RepositoryInterface {
     suspend fun updateDriverStandings()
 
 
-    fun saveSelectedDriverNumber(driverNumber: String)
-    suspend  fun getSelectedDriver(): Driver?
+    fun saveDriverForWidget(driverNumber: String, widgetId: Int)
+    suspend fun getDriverForWidget(widgetId: Int): Driver?
 
 }

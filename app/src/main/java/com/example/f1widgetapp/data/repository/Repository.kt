@@ -41,27 +41,21 @@ class Repository(
         return driverDao.getDriverByNumber(number)
     }
 
-    override fun saveSelectedDriverNumber(driverNumber: String) {
-        context.getSharedPreferences("f1_prefs", Context.MODE_PRIVATE)
+    override fun saveDriverForWidget(driverNumber: String, widgetId: Int) {
+        context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
             .edit()
-            .putString("selected_driver_number", driverNumber)
+            .putString("widget_$widgetId", driverNumber)
             .apply()
     }
 
-    override suspend fun getSelectedDriver(): Driver? {
-        val sharedPreferences = context.getSharedPreferences("f1_prefs", Context.MODE_PRIVATE)
-        try {
-            val selectedNumber = sharedPreferences.getString("selected_driver_number", "")
-            if (selectedNumber.isNullOrEmpty()) {
-                return null
-            }
-            return getDriverByNumber(selectedNumber)
-        } catch (e: Exception) {
-            val intValue = sharedPreferences.getInt("selected_driver_number", -1)
-            if (intValue != -1) {
-                return getDriverByNumber(intValue.toString())
-            }
+    override suspend fun getDriverForWidget(widgetId: Int): Driver? {
+        val sharedPreferences = context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
+        val driverNumber = sharedPreferences.getString("widget_$widgetId", "")
+        
+        if (driverNumber.isNullOrEmpty()) {
             return null
         }
+        
+        return getDriverByNumber(driverNumber)
     }
 }

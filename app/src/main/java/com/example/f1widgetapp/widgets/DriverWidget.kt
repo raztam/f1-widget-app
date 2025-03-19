@@ -1,7 +1,9 @@
 package com.example.f1widgetapp.widgets
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceId
 import androidx.glance.action.Action
@@ -11,6 +13,7 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.GlanceModifier
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.example.f1widgetapp.activities.DriverWidgetSettingsActivity
 import com.example.f1widgetapp.composables.DriverCard
 import com.example.f1widgetapp.data.modals.Driver
@@ -23,9 +26,14 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
     private val repository: RepositoryInterface by inject()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val selectedDriver = repository.getSelectedDriver()
+        val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
+        val selectedDriver = repository.getDriverForWidget(widgetId)
 
-        val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java)
+        Log.d("MyDriverWidget", "Driver for widget ID $widgetId: $selectedDriver")
+
+        val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+        }
 
         provideContent {
             DriverWidgetContent(

@@ -6,6 +6,7 @@ import androidx.work.*
 import androidx.glance.appwidget.updateAll
 import com.example.f1widgetapp.data.repository.RepositoryInterface
 import com.example.f1widgetapp.widgets.DriverWidget
+import com.example.f1widgetapp.widgets.DriverStandingsWidget
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
@@ -27,6 +28,7 @@ class UpdateWidgetsWorker(
 
             // Force widget update for all widget types
             DriverWidget.updateAll(applicationContext)
+            DriverStandingsWidget.updateAll(applicationContext)
             // Future widgets:
             // TeamWidget.updateAll(applicationContext)
             // RaceWidget.updateAll(applicationContext)

@@ -23,7 +23,15 @@ class UpdateWidgetsWorker(
         return try {
             Log.i(TAG, "Updating F1 data for all widgets...")
 
-            // Update data from API
+            // Get races (will fetch from API if local database is empty)
+            val races = repository.getAllRaces()
+            Log.i(TAG, "Loaded ${races.size} races for the season")
+
+            // Get drivers (will fetch from API if local database is empty)
+            val drivers = repository.getAllDrivers()
+            Log.i(TAG, "Loaded ${drivers.size} drivers")
+
+            // Update driver standings from API (always do this after races)
             repository.updateDriverStandings()
 
             // Force widget update for all widget types
@@ -32,6 +40,23 @@ class UpdateWidgetsWorker(
             // Future widgets:
             // TeamWidget.updateAll(applicationContext)
             // RaceWidget.updateAll(applicationContext)
+
+            // Schedule next update based on next event (sprint or race)
+            val nextEvent = repository.getNextRaceEvent()
+            if (nextEvent != null) {
+                val (race, isSprint) = nextEvent
+                val eventTime = if (isSprint) {
+                    race.getSprintEndTimeMillis()!!
+                } else {
+                    race.getRaceEndTimeMillis()
+                }
+
+                val eventType = if (isSprint) "Sprint" else "Race"
+                scheduleNextUpdate(applicationContext, eventTime)
+                Log.i(TAG, "Next update scheduled for $eventType at ${race.raceName} on ${race.date}")
+            } else {
+                Log.w(TAG, "No upcoming events found")
+            }
 
             Log.i(TAG, "All widget updates completed successfully.")
             Result.success()
@@ -46,42 +71,61 @@ class UpdateWidgetsWorker(
         private const val UNIQUE_WORK_NAME = "update_f1_widgets_data"
 
         fun schedule(context: Context) {
-            // Create calendar instance for next Sunday at 6 PM
-            val calendar = Calendar.getInstance().apply {
-                set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-                set(Calendar.HOUR_OF_DAY, 18) // 6 PM
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-
-                if (timeInMillis <= System.currentTimeMillis()) {
-                    add(Calendar.WEEK_OF_YEAR, 1)
-                }
-            }
-
-            // Calculate initial delay safely
-            val initialDelay = calendar.timeInMillis - System.currentTimeMillis()
-
-            // Define constraints (ensure network availability)
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-
-            // Create a weekly periodic work request
-            val request = PeriodicWorkRequestBuilder<UpdateWidgetsWorker>(7, TimeUnit.DAYS)
-                .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
-                .setConstraints(constraints)
-                .setBackoffCriteria(
-                    BackoffPolicy.EXPONENTIAL,
-                    30, TimeUnit.MINUTES
+            // Schedule initial work to fetch race schedule and set up updates
+            val initialRequest = OneTimeWorkRequestBuilder<UpdateWidgetsWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
                 )
                 .build()
 
-            // Enqueue the work request
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                UNIQUE_WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
-                request
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                "initial_race_fetch",
+                ExistingWorkPolicy.REPLACE,
+                initialRequest
             )
+        }
+
+        fun scheduleNextUpdate(context: Context, nextEventEndTime: Long) {
+            val delay = nextEventEndTime - System.currentTimeMillis()
+
+            if (delay <= 0) {
+                // Event already finished, update immediately
+                val immediateRequest = OneTimeWorkRequestBuilder<UpdateWidgetsWorker>()
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+                    )
+                    .build()
+
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    UNIQUE_WORK_NAME,
+                    ExistingWorkPolicy.REPLACE,
+                    immediateRequest
+                )
+            } else {
+                // Schedule update for after the event
+                val request = OneTimeWorkRequestBuilder<UpdateWidgetsWorker>()
+                    .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+                    )
+                    .setBackoffCriteria(
+                        BackoffPolicy.EXPONENTIAL,
+                        30, TimeUnit.MINUTES
+                    )
+                    .build()
+
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    UNIQUE_WORK_NAME,
+                    ExistingWorkPolicy.REPLACE,
+                    request
+                )
+            }
         }
     }
 }

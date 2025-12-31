@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.f1widgetapp.data.LocalDataSource
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.DriverStandingUpdate
+import com.example.f1widgetapp.data.modals.Race
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -15,7 +16,7 @@ class Api : ApiInterface, KoinComponent {
         return try {
             val drivers = api.getDrivers().mrData.driverTable?.drivers ?: return emptyList()
             val localData = localDriversData.drivers.getAdditionalInfo()
-            
+
             drivers.map { driver ->
                 val additionalInfo = localData[driver.driverId]
                 if (additionalInfo != null) {
@@ -51,4 +52,26 @@ class Api : ApiInterface, KoinComponent {
             emptyList()
         }
     }
+
+    override suspend fun getRaceSchedule(): List<Race> {
+        return try {
+            val response = api.getRaceSchedule()
+            response.mrData.raceTable.races.map { raceResponse ->
+                Race(
+                    round = raceResponse.round,
+                    season = raceResponse.season,
+                    raceName = raceResponse.raceName,
+                    date = raceResponse.date,
+                    time = raceResponse.time,
+                    circuitName = raceResponse.circuit?.circuitName,
+                    sprintDate = raceResponse.sprint?.date,
+                    sprintTime = raceResponse.sprint?.time
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("Api", "Error fetching race schedule", e)
+            emptyList()
+        }
+    }
 }
+

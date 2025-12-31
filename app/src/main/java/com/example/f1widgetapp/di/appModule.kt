@@ -17,6 +17,7 @@ val appModule = module {
     // Single instances
     single { AppDatabase.getDatabase(get()) }
     single { get<AppDatabase>().driverDao() }
+    single { get<AppDatabase>().raceDao() }
 
     // API
     single<F1InfoApi> {
@@ -32,7 +33,7 @@ val appModule = module {
     single<ApiInterface> { Api() }
 
     // Repository
-    single<RepositoryInterface> { Repository(driverDao = get(), remoteDataSource = get(), context = get()) }
+    single<RepositoryInterface> { Repository(driverDao = get(), raceDao = get(), remoteDataSource = get(), context = get()) }
 
     // ViewModels
     viewModel { DriversViewModel(repository = get()) }

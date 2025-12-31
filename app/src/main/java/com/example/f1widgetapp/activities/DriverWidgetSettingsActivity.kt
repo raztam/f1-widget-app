@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.ui.theme.F1WidgetAppTheme
-import com.example.f1widgetapp.composables.DriverDropDown
+import com.example.f1widgetapp.composables.SelectDropdown
 import com.example.f1widgetapp.viewmodels.DriversViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -70,6 +70,7 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                         .padding(innerPadding),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
+
                     ) {
 
                         Text(
@@ -77,24 +78,24 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                             modifier = Modifier.padding(16.dp)
                         )
 
-                        DriverDropDown(
-                            drivers = drivers.value,
-                            selectedDriver = selectedDriver.value,
-                            onDriverSelected = { driver: Driver ->
+                        SelectDropdown(
+                            items = drivers.value,
+                            selectedItem = selectedDriver.value,
+                            onItemSelected = { driver: Driver ->
                                 selectedDriver.value = driver
                                 driversViewModel.saveDriverForWidget(
                                     driver,
                                     widgetId,
                                     this@DriverWidgetSettingsActivity
                                 )
-
-
-                                // Set result as OK,then finish the activity
+                                // Set result as OK, then finish the activity
                                 setResult(RESULT_OK, Intent().apply {
                                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
                                 })
                                 finish()
-                            }
+                            },
+                            label = "Select Driver",
+                            itemToString = { it.fullName }
                         )
                     }
                 }

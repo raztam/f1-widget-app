@@ -65,38 +65,41 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
 
             F1WidgetAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                        verticalArrangement = Arrangement.Center,
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
-
                     ) {
-
-                        Text(
-                            text = "Select driver for widget",
-                            modifier = Modifier.padding(16.dp)
-                        )
-
-                        SelectDropdown(
-                            items = drivers.value,
-                            selectedItem = selectedDriver.value,
-                            onItemSelected = { driver: Driver ->
-                                selectedDriver.value = driver
-                                driversViewModel.saveDriverForWidget(
-                                    driver,
-                                    widgetId,
-                                    this@DriverWidgetSettingsActivity
-                                )
-                                // Set result as OK, then finish the activity
-                                setResult(RESULT_OK, Intent().apply {
-                                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                                })
-                                finish()
-                            },
-                            label = "Select Driver",
-                            itemToString = { it.fullName }
-                        )
+                        Column(
+                            modifier = Modifier.padding(top = 64.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Select driver for widget",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            SelectDropdown(
+                                items = drivers.value,
+                                selectedItem = selectedDriver.value,
+                                onItemSelected = { driver: Driver ->
+                                    selectedDriver.value = driver
+                                    driversViewModel.saveDriverForWidget(
+                                        driver,
+                                        widgetId,
+                                        this@DriverWidgetSettingsActivity
+                                    )
+                                    // Set result as OK, then finish the activity
+                                    setResult(RESULT_OK, Intent().apply {
+                                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                                    })
+                                    finish()
+                                },
+                                label = "Select Driver",
+                                itemToString = { it.fullName }
+                            )
+                        }
                     }
                 }
             }

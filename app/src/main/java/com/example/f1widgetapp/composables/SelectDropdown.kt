@@ -1,6 +1,7 @@
 package com.example.f1widgetapp.composables
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -53,8 +54,14 @@ fun <T> SelectDropdown(
                     textFieldSize = coordinates.size.toSize()
                 },
             trailingIcon = {
-                Icon(icon, contentDescription = null,
-                    Modifier.clickable { expanded = !expanded })
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { expanded = !expanded }
+                )
             }
         )
 

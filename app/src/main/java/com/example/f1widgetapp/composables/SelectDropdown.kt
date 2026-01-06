@@ -21,13 +21,13 @@ import androidx.compose.ui.unit.toSize
 
 @Composable
 fun <T> SelectDropdown(
+    modifier: Modifier = Modifier,
     items: List<T>,
     selectedItem: T?,
     onItemSelected: (T) -> Unit,
-    label: String,
+    label: String? = null,
     editable: Boolean = false,
     itemToString: (T) -> String = { it.toString() },
-    modifier: Modifier = Modifier,
     itemContent: @Composable (T) -> Unit = { item ->
         // Default behavior: simple DropdownMenuItem
         DropdownMenuItem(
@@ -46,7 +46,7 @@ fun <T> SelectDropdown(
         OutlinedTextField(
             value = selectedItem?.let(itemToString) ?: "",
             onValueChange = { if (editable) { /* optional typing logic */ } },
-            label = { Text(label) },
+            label = label?.takeIf { it.isNotEmpty() }?.let { { Text(it) } },
             readOnly = !editable,
             modifier = Modifier
                 .fillMaxWidth() // fills Column width (which is padded)

@@ -77,7 +77,7 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Select driver for widget",
+                                text = "Choose a driver to display in your widget",
                                 modifier = Modifier.padding(16.dp)
                             )
                             SelectDropdown(
@@ -96,7 +96,6 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                                     })
                                     finish()
                                 },
-                                label = "Select Driver",
                                 itemToString = { it.fullName }
                             )
                         }

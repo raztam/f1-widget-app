@@ -35,12 +35,24 @@ fun Context.getDrawableId(imageName: String): Int {
 fun DriverCard(
     driver: Driver?,
     context: Context = LocalContext.current,
-    modifier: GlanceModifier = GlanceModifier
+    modifier: GlanceModifier = GlanceModifier,
+    transparency: Float = 0.9f
 ) {
+    // Calculate background color with transparency applied
+    // Original color: 0xE6708090 (red=0x70=112, green=0x80=128, blue=0x90=144)
+    // Use full alpha range (0-255) so 100% transparency = fully opaque
+    val alpha = (255 * transparency).toInt().coerceIn(0, 255)
+    val backgroundColor = Color(
+        red = 112,
+        green = 128,
+        blue = 144,
+        alpha = alpha
+    )
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(androidx.glance.unit.ColorProvider(Color(0xE6708090)))
+            .background(androidx.glance.unit.ColorProvider(backgroundColor))
             .padding(top = 8.dp, start = 8.dp, end = 8.dp),
         contentAlignment = androidx.glance.layout.Alignment.TopCenter
     ) {

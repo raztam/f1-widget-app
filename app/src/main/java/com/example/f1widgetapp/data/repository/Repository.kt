@@ -5,8 +5,10 @@ import android.util.Log
 import com.example.f1widgetapp.data.api.ApiInterface
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.Race
+import com.example.f1widgetapp.data.modals.WidgetSettings
 import com.example.f1widgetapp.data.room.DriverDao
 import com.example.f1widgetapp.data.room.RaceDao
+import com.google.gson.Gson
 import java.util.Calendar
 
 class Repository(
@@ -45,22 +47,30 @@ class Repository(
         return driverDao.getDriverByNumber(number)
     }
 
-    override fun saveDriverForWidget(driverNumber: String, widgetId: Int) {
+    override fun saveWidgetSettings(settings: WidgetSettings, widgetId: Int) {
+        val gson = Gson()
+        val json = gson.toJson(settings)
         context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
             .edit()
-            .putString("widget_$widgetId", driverNumber)
+            .putString("widget_settings_$widgetId", json)
             .apply()
     }
 
-    override suspend fun getDriverForWidget(widgetId: Int): Driver? {
+    override suspend fun getWidgetSettings(widgetId: Int): WidgetSettings {
         val sharedPreferences = context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
-        val driverNumber = sharedPreferences.getString("widget_$widgetId", "")
+        val json = sharedPreferences.getString("widget_settings_$widgetId", null)
 
-        if (driverNumber.isNullOrEmpty()) {
-            return null
+        return if (json != null) {
+            try {
+                val gson = Gson()
+                gson.fromJson(json, WidgetSettings::class.java)
+            } catch (e: Exception) {
+                Log.e("Repository", "Error parsing WidgetSettings for widget $widgetId", e)
+                WidgetSettings()
+            }
+        } else {
+            WidgetSettings()
         }
-
-        return getDriverByNumber(driverNumber)
     }
 
     override suspend fun fetchAndSaveRaceSchedule() {
@@ -96,14 +106,14 @@ class Repository(
         return null // No upcoming events
     }
 
-        override suspend fun getAllRaces(): List<Race> {
-            val currentYear = Calendar.getInstance().get(Calendar.YEAR).toString()
-            val races = raceDao.getRacesForSeason(currentYear)
-            if (races.isEmpty()) {
-                fetchAndSaveRaceSchedule()
-                return raceDao.getRacesForSeason(currentYear)
-            }
-            return races
+    override suspend fun getAllRaces(): List<Race> {
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR).toString()
+        val races = raceDao.getRacesForSeason(currentYear)
+        if (races.isEmpty()) {
+            fetchAndSaveRaceSchedule()
+            return raceDao.getRacesForSeason(currentYear)
         }
+        return races
     }
+}
 

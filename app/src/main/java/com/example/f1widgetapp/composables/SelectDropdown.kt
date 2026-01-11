@@ -28,16 +28,24 @@ fun <T> SelectDropdown(
     label: String? = null,
     editable: Boolean = false,
     itemToString: (T) -> String = { it.toString() },
-    itemContent: @Composable (T) -> Unit = { item ->
-        // Default behavior: simple DropdownMenuItem
+    itemContent: @Composable (T, (T) -> Unit) -> Unit = { item, onSelect ->
+        // Default behavior: simple DropdownMenuItem that closes on selection
         DropdownMenuItem(
             text = { Text(itemToString(item)) },
-            onClick = { onItemSelected(item) }
+            onClick = {
+                onSelect(item)
+            }
         )
     }
 ) {
     var expanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
+
+    // Create a wrapper that closes the dropdown after selection
+    val onItemSelectedWithClose: (T) -> Unit = { item ->
+        onItemSelected(item)
+        expanded = false
+    }
 
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
 
@@ -73,7 +81,7 @@ fun <T> SelectDropdown(
                 .heightIn(max = 300.dp)
         ) {
             items.forEach { item ->
-                itemContent(item)
+                itemContent(item, onItemSelectedWithClose)
             }
         }
     }

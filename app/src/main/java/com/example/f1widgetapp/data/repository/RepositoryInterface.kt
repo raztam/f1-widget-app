@@ -2,6 +2,7 @@ package com.example.f1widgetapp.data.repository
 
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.Race
+import com.example.f1widgetapp.data.modals.WidgetSettings
 
 
 interface RepositoryInterface {
@@ -15,7 +16,7 @@ interface RepositoryInterface {
     suspend fun getNextRaceEvent(): Pair<Race, Boolean>?
     suspend fun getAllRaces(): List<Race>
 
-    fun saveDriverForWidget(driverNumber: String, widgetId: Int)
-    suspend fun getDriverForWidget(widgetId: Int): Driver?
+    fun saveWidgetSettings(settings: WidgetSettings, widgetId: Int)
+    suspend fun getWidgetSettings(widgetId: Int): WidgetSettings
 
 }

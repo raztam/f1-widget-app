@@ -27,9 +27,16 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        val selectedDriver = repository.getDriverForWidget(widgetId)
+        val settings = repository.getWidgetSettings(widgetId)
 
-        Log.d("MyDriverWidget", "Driver for widget ID $widgetId: $selectedDriver")
+        // Get driver from settings
+        val selectedDriver = if (settings.driverNumber.isNotEmpty()) {
+            repository.getDriverByNumber(settings.driverNumber)
+        } else {
+            null
+        }
+
+        Log.d("MyDriverWidget", "Driver for widget ID $widgetId: $selectedDriver, transparency: ${settings.transparency}")
 
         val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -38,6 +45,7 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
         provideContent {
             DriverWidgetContent(
                 driver = selectedDriver,
+                transparency = settings.transparency,
                 onClick = actionStartActivity(settingsIntent)
             )
         }
@@ -45,9 +53,10 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
 }
 
 @Composable
-fun DriverWidgetContent(driver: Driver?, onClick: Action) {
+fun DriverWidgetContent(driver: Driver?, transparency: Float, onClick: Action) {
     DriverCard(
         driver = driver,
+        transparency = transparency,
         modifier = GlanceModifier.clickable(onClick)
     )
 }

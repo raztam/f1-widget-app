@@ -6,6 +6,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.f1widgetapp.data.modals.Driver
+import com.example.f1widgetapp.data.modals.WidgetSettings
 import com.example.f1widgetapp.data.repository.RepositoryInterface
 import com.example.f1widgetapp.widgets.DriverWidget
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,16 +26,16 @@ class DriversViewModel(
         }
     }
 
-    fun saveDriverForWidget(driver: Driver, widgetId: Int, context: Context?) {
-        repository.saveDriverForWidget(driver.driverNumber, widgetId)
+    fun saveWidgetSettings(settings: WidgetSettings, widgetId: Int, context: Context?) {
+        repository.saveWidgetSettings(settings, widgetId)
 
         context?.let { ctx ->
             updateWidget(ctx, widgetId)
         }
     }
 
-    suspend fun getDriverForWidget(widgetId: Int): Driver? {
-        return repository.getDriverForWidget(widgetId)
+    suspend fun getWidgetSettings(widgetId: Int): WidgetSettings {
+        return repository.getWidgetSettings(widgetId)
     }
 
     private fun updateWidget(context: Context, widgetId: Int) {

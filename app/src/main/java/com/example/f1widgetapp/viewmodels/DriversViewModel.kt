@@ -1,7 +1,6 @@
 package com.example.f1widgetapp.viewmodels
 
 import android.content.Context
-import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,9 +25,8 @@ class DriversViewModel(
         }
     }
 
-    fun saveWidgetSettings(settings: WidgetSettings, widgetId: Int, context: Context?) {
+    suspend fun saveWidgetSettingsAndUpdate(settings: WidgetSettings, widgetId: Int, context: Context?) {
         repository.saveWidgetSettings(settings, widgetId)
-
         context?.let { ctx ->
             updateWidget(ctx, widgetId)
         }
@@ -38,16 +36,20 @@ class DriversViewModel(
         return repository.getWidgetSettings(widgetId)
     }
 
-    private fun updateWidget(context: Context, widgetId: Int) {
-        viewModelScope.launch {
-            val manager = GlanceAppWidgetManager(context)
-            val glanceIds = manager.getGlanceIds(DriverWidget::class.java)
+    private suspend fun updateWidget(context: Context, widgetId: Int) {
+        val manager = GlanceAppWidgetManager(context)
+        val glanceIds = manager.getGlanceIds(DriverWidget::class.java)
 
-            // Find the matching widget ID and update it
-            glanceIds.find { manager.getAppWidgetId(it) == widgetId }?.let { glanceId ->
-                Log.d("MyDriversViewModel", "Updating widget with ID: $widgetId")
-                DriverWidget.update(context, glanceId)
+        glanceIds.find { manager.getAppWidgetId(it) == widgetId }?.let { glanceId ->
+            val settings = repository.getWidgetSettings(widgetId)
+
+            androidx.glance.appwidget.state.updateAppWidgetState(context, glanceId) { prefs ->
+                prefs[androidx.datastore.preferences.core.stringPreferencesKey("driver_number")] = settings.driverNumber
+                prefs[androidx.datastore.preferences.core.floatPreferencesKey("transparency")] = settings.transparency
+                prefs[androidx.datastore.preferences.core.longPreferencesKey("last_update")] = System.currentTimeMillis()
             }
+
+            DriverWidget.update(context, glanceId)
         }
     }
 }

@@ -4,4 +4,5 @@
     android:minWidth="200dp"
     android:minHeight="45dp"
     android:updatePeriodMillis="0"
-    android:resizeMode="none" />
+    android:resizeMode="none"
+    android:configure="com.example.f1widgetapp.activities.DriverWidgetSettingsActivity" />

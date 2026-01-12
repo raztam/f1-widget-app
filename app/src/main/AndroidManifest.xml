@@ -17,7 +17,7 @@
         android:theme="@style/Theme.F1WidgetApp">
         <activity
             android:name=".activities.DriverWidgetSettingsActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_driver_widget_settings"
             android:theme="@style/Theme.F1WidgetApp" />
 

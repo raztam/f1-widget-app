@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,8 @@ import com.example.f1widgetapp.data.modals.WidgetSettings
 import com.example.f1widgetapp.ui.theme.F1WidgetAppTheme
 import com.example.f1widgetapp.composables.SelectDropdown
 import com.example.f1widgetapp.viewmodels.DriversViewModel
+import com.example.f1widgetapp.widgets.DriverWidgetReceiver
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 class DriverWidgetSettingsActivity : ComponentActivity() {
@@ -70,13 +73,11 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                 driversViewModel.fetchDrivers()
             }
 
-            // Load settings and update selected driver when drivers are loaded
             LaunchedEffect(drivers.value.isNotEmpty()) {
                 if (drivers.value.isNotEmpty()) {
                     val settings = driversViewModel.getWidgetSettings(widgetId)
                     transparency = settings.transparency
 
-                    // Load driver from settings
                     if (settings.driverNumber.isNotEmpty()) {
                         selectedDriver =
                             drivers.value.find { it.driverNumber == settings.driverNumber }
@@ -142,16 +143,19 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                                             driverNumber = driverNumber,
                                             transparency = transparency
                                         )
-                                        driversViewModel.saveWidgetSettings(
-                                            settings,
-                                            widgetId,
-                                            this@DriverWidgetSettingsActivity
-                                        )
-                                        // Set result as OK, then finish the activity
-                                        setResult(RESULT_OK, Intent().apply {
-                                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                                        })
-                                        finish()
+
+                                        lifecycleScope.launch {
+                                            driversViewModel.saveWidgetSettingsAndUpdate(
+                                                settings,
+                                                widgetId,
+                                                this@DriverWidgetSettingsActivity
+                                            )
+
+                                            setResult(RESULT_OK, Intent().apply {
+                                                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                                            })
+                                            finish()
+                                        }
                                     },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.primary,

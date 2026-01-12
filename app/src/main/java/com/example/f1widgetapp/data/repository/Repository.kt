@@ -50,15 +50,19 @@ class Repository(
     override fun saveWidgetSettings(settings: WidgetSettings, widgetId: Int) {
         val gson = Gson()
         val json = gson.toJson(settings)
-        context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+
+        sharedPreferences
             .edit()
-            .putString("widget_settings_$widgetId", json)
-            .apply()
+            .putString(key, json)
+            .commit()
     }
 
     override suspend fun getWidgetSettings(widgetId: Int): WidgetSettings {
         val sharedPreferences = context.getSharedPreferences("widget_drivers", Context.MODE_PRIVATE)
-        val json = sharedPreferences.getString("widget_settings_$widgetId", null)
+        val key = "widget_settings_$widgetId"
+        val json = sharedPreferences.getString(key, null)
 
         return if (json != null) {
             try {

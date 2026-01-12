@@ -3,17 +3,28 @@ package com.example.f1widgetapp.widgets
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
-import androidx.glance.GlanceModifier
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.currentState
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.f1widgetapp.activities.DriverWidgetSettingsActivity
 import com.example.f1widgetapp.composables.DriverCard
 import com.example.f1widgetapp.data.modals.Driver
@@ -25,27 +36,32 @@ import org.koin.core.component.inject
 object DriverWidget : GlanceAppWidget(), KoinComponent {
     private val repository: RepositoryInterface by inject()
 
+    // Add state definition to enable force updates
+    override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        val settings = repository.getWidgetSettings(widgetId)
-
-        // Get driver from settings
-        val selectedDriver = if (settings.driverNumber.isNotEmpty()) {
-            repository.getDriverByNumber(settings.driverNumber)
-        } else {
-            null
-        }
-
-        Log.d("MyDriverWidget", "Driver for widget ID $widgetId: $selectedDriver, transparency: ${settings.transparency}")
-
-        val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java).apply {
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-        }
 
         provideContent {
+            val prefs = currentState<Preferences>()
+            val driverNumber = prefs[stringPreferencesKey("driver_number")] ?: ""
+            val transparency = prefs[floatPreferencesKey("transparency")] ?: 0.9f
+
+            val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+            }
+
+            var driver by remember { mutableStateOf<Driver?>(null) }
+
+            LaunchedEffect(driverNumber) {
+                if (driverNumber.isNotEmpty()) {
+                    driver = repository.getDriverByNumber(driverNumber)
+                }
+            }
+
             DriverWidgetContent(
-                driver = selectedDriver,
-                transparency = settings.transparency,
+                driver = driver,
+                transparency = transparency,
                 onClick = actionStartActivity(settingsIntent)
             )
         }

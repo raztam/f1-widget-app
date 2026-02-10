@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.skydoves.colorpicker.compose)
     // Kept
     kapt(libs.androidx.room.compiler)
     testImplementation(libs.junit)

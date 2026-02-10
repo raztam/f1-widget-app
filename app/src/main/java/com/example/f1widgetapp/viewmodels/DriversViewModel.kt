@@ -46,6 +46,7 @@ class DriversViewModel(
             androidx.glance.appwidget.state.updateAppWidgetState(context, glanceId) { prefs ->
                 prefs[androidx.datastore.preferences.core.stringPreferencesKey("driver_number")] = settings.driverNumber
                 prefs[androidx.datastore.preferences.core.floatPreferencesKey("transparency")] = settings.transparency
+                prefs[androidx.datastore.preferences.core.intPreferencesKey("background_color")] = settings.backgroundColor
                 prefs[androidx.datastore.preferences.core.longPreferencesKey("last_update")] = System.currentTimeMillis()
             }
 

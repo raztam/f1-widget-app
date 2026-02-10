@@ -20,6 +20,7 @@ lifecycle-viewmodel = "2.7.0"
 koin = "3.5.3"
 workRuntimeKtx = "2.10.0"
 foundationLayout = "1.10.0"
+skydovesColorPicker = "1.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,6 +53,7 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+skydoves-colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "skydovesColorPicker" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

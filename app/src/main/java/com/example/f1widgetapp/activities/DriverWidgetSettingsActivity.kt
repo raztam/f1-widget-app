@@ -8,11 +8,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.WidgetSettings
@@ -36,6 +44,10 @@ import com.example.f1widgetapp.ui.theme.F1WidgetAppTheme
 import com.example.f1widgetapp.composables.SelectDropdown
 import com.example.f1widgetapp.viewmodels.DriversViewModel
 import com.example.f1widgetapp.widgets.DriverWidgetReceiver
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -68,6 +80,8 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
             val drivers = driversViewModel.driversState.collectAsState()
             var selectedDriver by remember { mutableStateOf<Driver?>(null) }
             var transparency by remember { mutableFloatStateOf(0.9f) }
+            var backgroundColorInt by remember { mutableStateOf(0xFF708090.toInt()) }
+            val colorPickerController = rememberColorPickerController()
 
             LaunchedEffect(Unit) { // run once
                 driversViewModel.fetchDrivers()
@@ -77,6 +91,7 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                 if (drivers.value.isNotEmpty()) {
                     val settings = driversViewModel.getWidgetSettings(widgetId)
                     transparency = settings.transparency
+                    backgroundColorInt = settings.backgroundColor
 
                     if (settings.driverNumber.isNotEmpty()) {
                         selectedDriver =
@@ -122,10 +137,47 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                                 )
 
                                 Text(
+                                    text = "Background color",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+                                )
+
+                                // Current color preview
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(Color(backgroundColorInt), CircleShape)
+                                        .border(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                            shape = CircleShape
+                                        )
+                                )
+
+                                HsvColorPicker(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp)
+                                        .height(180.dp),
+                                    controller = colorPickerController,
+                                    onColorChanged = { colorEnvelope: ColorEnvelope ->
+                                        backgroundColorInt = colorEnvelope.color.toArgb()
+                                    }
+                                )
+
+                                BrightnessSlider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 12.dp),
+                                    controller = colorPickerController
+                                )
+
+                                Text(
                                     text = "Transparency: ${(transparency * 100).toInt()}%",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.padding(top = 32.dp, bottom = 8.dp)
+                                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
                                 )
                                 Slider(
                                     value = transparency,
@@ -141,7 +193,8 @@ class DriverWidgetSettingsActivity : ComponentActivity() {
                                         val driverNumber = selectedDriver?.driverNumber ?: ""
                                         val settings = WidgetSettings(
                                             driverNumber = driverNumber,
-                                            transparency = transparency
+                                            transparency = transparency,
+                                            backgroundColor = backgroundColorInt
                                         )
 
                                         lifecycleScope.launch {

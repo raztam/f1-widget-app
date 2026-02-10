@@ -46,6 +46,8 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
             val prefs = currentState<Preferences>()
             val driverNumber = prefs[stringPreferencesKey("driver_number")] ?: ""
             val transparency = prefs[floatPreferencesKey("transparency")] ?: 0.9f
+            val backgroundColor = prefs[androidx.datastore.preferences.core.intPreferencesKey("background_color")]
+                ?: 0xFF708090.toInt()
 
             val settingsIntent = Intent(context, DriverWidgetSettingsActivity::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -62,6 +64,7 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
             DriverWidgetContent(
                 driver = driver,
                 transparency = transparency,
+                backgroundColor = backgroundColor,
                 onClick = actionStartActivity(settingsIntent)
             )
         }
@@ -69,10 +72,16 @@ object DriverWidget : GlanceAppWidget(), KoinComponent {
 }
 
 @Composable
-fun DriverWidgetContent(driver: Driver?, transparency: Float, onClick: Action) {
+fun DriverWidgetContent(
+    driver: Driver?,
+    transparency: Float,
+    backgroundColor: Int,
+    onClick: Action
+) {
     DriverCard(
         driver = driver,
         transparency = transparency,
+        backgroundColor = backgroundColor,
         modifier = GlanceModifier.clickable(onClick)
     )
 }

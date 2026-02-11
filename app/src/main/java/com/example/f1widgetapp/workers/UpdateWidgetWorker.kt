@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.work.*
 import androidx.glance.appwidget.updateAll
 import com.example.f1widgetapp.data.repository.RepositoryInterface
+import com.example.f1widgetapp.widgets.ConstructorWidget
 import com.example.f1widgetapp.widgets.DriverWidget
 import com.example.f1widgetapp.widgets.DriverStandingsWidget
 import org.koin.core.component.KoinComponent
@@ -34,12 +35,17 @@ class UpdateWidgetsWorker(
             // Update driver standings from API (always do this after races)
             repository.updateDriverStandings()
 
+            // Get constructors (will fetch from API if local database is empty)
+            val constructors = repository.getAllConstructors()
+            Log.i(TAG, "Loaded ${constructors.size} constructors")
+
+            // Update constructor standings from API
+            repository.updateConstructorStandings()
+
             // Force widget update for all widget types
             DriverWidget.updateAll(applicationContext)
             DriverStandingsWidget.updateAll(applicationContext)
-            // Future widgets:
-            // TeamWidget.updateAll(applicationContext)
-            // RaceWidget.updateAll(applicationContext)
+            ConstructorWidget.updateAll(applicationContext)
 
             // Schedule next update based on next event (sprint or race)
             val nextEvent = repository.getNextRaceEvent()

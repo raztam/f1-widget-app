@@ -3,9 +3,12 @@ package com.example.f1widgetapp.data.repository
 import android.content.Context
 import android.util.Log
 import com.example.f1widgetapp.data.api.ApiInterface
+import com.example.f1widgetapp.data.modals.Constructor
+import com.example.f1widgetapp.data.modals.ConstructorWidgetSettings
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.Race
 import com.example.f1widgetapp.data.modals.WidgetSettings
+import com.example.f1widgetapp.data.room.ConstructorDao
 import com.example.f1widgetapp.data.room.DriverDao
 import com.example.f1widgetapp.data.room.RaceDao
 import com.google.gson.Gson
@@ -14,6 +17,7 @@ import java.util.Calendar
 class Repository(
     private val driverDao: DriverDao,
     private val raceDao: RaceDao,
+    private val constructorDao: ConstructorDao,
     private val remoteDataSource: ApiInterface,
     private val context: Context
 ) : RepositoryInterface {
@@ -47,6 +51,36 @@ class Repository(
         return driverDao.getDriverByNumber(number)
     }
 
+    override suspend fun getAllConstructors(): List<Constructor> {
+        val localConstructors = constructorDao.getAllConstructors()
+        return localConstructors.ifEmpty {
+            upsertConstructors()
+        }
+    }
+
+    override suspend fun upsertConstructors(): List<Constructor> {
+        val remoteConstructors = remoteDataSource.getConstructors()
+        constructorDao.upsertConstructors(remoteConstructors)
+        updateConstructorStandings()
+        return remoteConstructors
+    }
+
+    override suspend fun updateConstructorStandings() {
+        val standings = remoteDataSource.getConstructorsStandings()
+        Log.d("Repository", "Updating constructor standings: $standings")
+        standings.forEach { update ->
+            constructorDao.updateConstructorStandings(
+                constructorId = update.constructorId,
+                position = update.position,
+                points = update.points
+            )
+        }
+    }
+
+    override suspend fun getConstructorById(id: String): Constructor? {
+        return constructorDao.getConstructorById(id)
+    }
+
     override fun saveWidgetSettings(settings: WidgetSettings, widgetId: Int) {
         val gson = Gson()
         val json = gson.toJson(settings)
@@ -74,6 +108,36 @@ class Repository(
             }
         } else {
             WidgetSettings()
+        }
+    }
+
+    override fun saveConstructorWidgetSettings(settings: ConstructorWidgetSettings, widgetId: Int) {
+        val gson = Gson()
+        val json = gson.toJson(settings)
+        val sharedPreferences = context.getSharedPreferences("widget_constructors", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+
+        sharedPreferences
+            .edit()
+            .putString(key, json)
+            .commit()
+    }
+
+    override suspend fun getConstructorWidgetSettings(widgetId: Int): ConstructorWidgetSettings {
+        val sharedPreferences = context.getSharedPreferences("widget_constructors", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+        val json = sharedPreferences.getString(key, null)
+
+        return if (json != null) {
+            try {
+                val gson = Gson()
+                gson.fromJson(json, ConstructorWidgetSettings::class.java)
+            } catch (e: Exception) {
+                Log.e("Repository", "Error parsing ConstructorWidgetSettings for widget $widgetId", e)
+                ConstructorWidgetSettings()
+            }
+        } else {
+            ConstructorWidgetSettings()
         }
     }
 

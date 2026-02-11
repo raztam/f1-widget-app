@@ -11,6 +11,12 @@ interface F1InfoApi {
     @GET("f1/current/driverstandings")
     suspend fun getDriverStandings(): ErgastResponse
 
+    @GET("f1/current/constructors")
+    suspend fun getConstructors(): ErgastResponse
+
+    @GET("f1/current/constructorstandings")
+    suspend fun getConstructorStandings(): ErgastResponse
+
     @GET("f1/current/races.json")
     suspend fun getRaceSchedule(): RaceScheduleResponse
 

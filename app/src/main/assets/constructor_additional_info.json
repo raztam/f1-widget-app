@@ -1,0 +1,42 @@
+[
+  {
+    "constructorId": "alpine",
+    "teamColor": "#1E41FF"
+  },
+  {
+    "constructorId": "aston_martin",
+    "teamColor": "#006F62"
+  },
+  {
+    "constructorId": "ferrari",
+    "teamColor": "#DC0000"
+  },
+  {
+    "constructorId": "haas",
+    "teamColor": "#F1F1F1"
+  },
+  {
+    "constructorId": "sauber",
+    "teamColor": "#00C2B8"
+  },
+  {
+    "constructorId": "mclaren",
+    "teamColor": "#FF8700"
+  },
+  {
+    "constructorId": "mercedes",
+    "teamColor": "#00D2BE"
+  },
+  {
+    "constructorId": "rb",
+    "teamColor": "#1E41FF"
+  },
+  {
+    "constructorId": "red_bull",
+    "teamColor": "#0600EF"
+  },
+  {
+    "constructorId": "williams",
+    "teamColor": "#005A8D"
+  }
+]

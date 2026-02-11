@@ -2,6 +2,8 @@ package com.example.f1widgetapp.data.api
 
 import android.util.Log
 import com.example.f1widgetapp.data.LocalDataSource
+import com.example.f1widgetapp.data.modals.Constructor
+import com.example.f1widgetapp.data.modals.ConstructorStandingUpdate
 import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.DriverStandingUpdate
 import com.example.f1widgetapp.data.modals.Race
@@ -14,7 +16,9 @@ class Api : ApiInterface, KoinComponent {
 
     override suspend fun getDrivers(): List<Driver> {
         return try {
-            val drivers = api.getDrivers().mrData.driverTable?.drivers ?: return emptyList()
+            val drivers = api.getDrivers().mrData.driverTable?.drivers
+                ?.filter { it.driverNumber != null }
+                ?: return emptyList()
             val localData = localDriversData.drivers.getAdditionalInfo()
 
             drivers.map { driver ->
@@ -40,7 +44,7 @@ class Api : ApiInterface, KoinComponent {
             val standingsList = response.mrData.standingsTable?.standingsLists?.firstOrNull()
                 ?: return emptyList()
 
-            standingsList.driverStandings.map { standing ->
+            (standingsList.driverStandings ?: emptyList()).map { standing ->
                 DriverStandingUpdate(
                     driverId = standing.driver.driverId,
                     position = standing.position ?: "DNF",
@@ -49,6 +53,46 @@ class Api : ApiInterface, KoinComponent {
             }
         } catch (e: Exception) {
             Log.e("F1Api", "Error fetching driver standings", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getConstructors(): List<Constructor> {
+        return try {
+            val constructors = api.getConstructors().mrData.constructorTable?.constructors ?: return emptyList()
+            val localData = localDriversData.constructors.getAdditionalInfo()
+
+            constructors.map { ref ->
+                val additionalInfo = localData[ref.constructorId]
+                Constructor(
+                    constructorId = ref.constructorId,
+                    name = ref.name,
+                    nationality = ref.nationality,
+                    url = ref.url,
+                    teamColor = additionalInfo?.teamColor
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("Api", "Error fetching constructors", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getConstructorsStandings(): List<ConstructorStandingUpdate> {
+        return try {
+            val response = api.getConstructorStandings()
+            val standingsList = response.mrData.standingsTable?.standingsLists?.firstOrNull()
+                ?: return emptyList()
+
+            (standingsList.constructorStandings ?: emptyList()).map { standing ->
+                ConstructorStandingUpdate(
+                    constructorId = standing.constructor.constructorId,
+                    position = standing.position ?: "DNF",
+                    points = standing.points ?: "0"
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("Api", "Error fetching constructor standings", e)
             emptyList()
         }
     }

@@ -16,7 +16,9 @@ data class MRData(
     val total: String? = null,
     @SerializedName("DriverTable")
     val driverTable: DriverTable? = null,
-    @SerializedName("StandingsTable") 
+    @SerializedName("ConstructorTable")
+    val constructorTable: ConstructorTable? = null,
+    @SerializedName("StandingsTable")
     val standingsTable: StandingsTable? = null
 )
 
@@ -37,7 +39,9 @@ data class StandingsList(
     val season: String,
     val round: String,
     @SerializedName("DriverStandings")
-    val driverStandings: List<DriverStanding>
+    val driverStandings: List<DriverStanding>? = null,
+    @SerializedName("ConstructorStandings")
+    val constructorStandings: List<ConstructorStanding>? = null
 )
 
 data class DriverStanding(
@@ -49,4 +53,24 @@ data class DriverStanding(
 
 data class DriverReference(
     val driverId: String
+)
+
+data class ConstructorTable(
+    val season: String,
+    @SerializedName("Constructors")
+    val constructors: List<ConstructorReference>
+)
+
+data class ConstructorStanding(
+    val position: String,
+    val points: String,
+    @SerializedName("Constructor")
+    val constructor: ConstructorReference
+)
+
+data class ConstructorReference(
+    val constructorId: String,
+    val name: String? = null,
+    val nationality: String? = null,
+    val url: String? = null
 )

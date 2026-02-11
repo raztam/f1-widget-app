@@ -20,6 +20,11 @@
             android:exported="true"
             android:label="@string/title_activity_driver_widget_settings"
             android:theme="@style/Theme.F1WidgetApp" />
+        <activity
+            android:name=".activities.ConstructorWidgetSettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_constructor_widget_settings"
+            android:theme="@style/Theme.F1WidgetApp" />
 
         <receiver
             android:name=".widgets.DriverWidgetReceiver"
@@ -31,6 +36,18 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/driver_widget_info" />
+        </receiver>
+
+        <!-- Constructor Widget Receiver -->
+        <receiver
+            android:name=".widgets.ConstructorWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/constructor_widget_info" />
         </receiver>
 
         <!-- Driver Standings Widget Receiver -->

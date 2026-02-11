@@ -5,4 +5,5 @@
     <string name="app_widget_description">This is an app widget description</string>
     <string name="title_activity_driver_widget_settings">DriverWidgetSettingsActivity</string>
     <string name="driver_standings_widget_description">Shows current F1 driver standings table</string>
+    <string name="title_activity_constructor_widget_settings">ConstructorWidgetSettingsActivity</string>
 </resources>

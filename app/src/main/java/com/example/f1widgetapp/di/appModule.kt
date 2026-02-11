@@ -7,6 +7,7 @@ import com.example.f1widgetapp.data.api.F1InfoApi
 import com.example.f1widgetapp.data.repository.Repository
 import com.example.f1widgetapp.data.repository.RepositoryInterface
 import com.example.f1widgetapp.data.room.AppDatabase
+import com.example.f1widgetapp.viewmodels.ConstructorsViewModel
 import com.example.f1widgetapp.viewmodels.DriversViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -18,6 +19,7 @@ val appModule = module {
     single { AppDatabase.getDatabase(get()) }
     single { get<AppDatabase>().driverDao() }
     single { get<AppDatabase>().raceDao() }
+    single { get<AppDatabase>().constructorDao() }
 
     // API
     single<F1InfoApi> {
@@ -33,8 +35,9 @@ val appModule = module {
     single<ApiInterface> { Api() }
 
     // Repository
-    single<RepositoryInterface> { Repository(driverDao = get(), raceDao = get(), remoteDataSource = get(), context = get()) }
+    single<RepositoryInterface> { Repository(driverDao = get(), raceDao = get(), constructorDao = get(), remoteDataSource = get(), context = get()) }
 
     // ViewModels
     viewModel { DriversViewModel(repository = get()) }
+    viewModel { ConstructorsViewModel(repository = get()) }
 }

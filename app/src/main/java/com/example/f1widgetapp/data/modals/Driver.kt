@@ -12,7 +12,7 @@ data class Driver(
     val givenName: String?,
     val familyName: String?,
     @SerializedName("permanentNumber")
-    val driverNumber: String,
+    val driverNumber: String?,
     val score: String?,
     val position: String?,
     val code:String?,

@@ -16,8 +16,8 @@
     "teamColor": "#F1F1F1"
   },
   {
-    "constructorId": "sauber",
-    "teamColor": "#00C2B8"
+    "constructorId": "audi",
+    "teamColor": "#CE1E13"
   },
   {
     "constructorId": "mclaren",
@@ -33,10 +33,14 @@
   },
   {
     "constructorId": "red_bull",
-    "teamColor": "#0600EF"
+    "teamColor": "#13253E"
   },
   {
     "constructorId": "williams",
     "teamColor": "#005A8D"
+  },
+  {
+    "constructorId": "cadillac",
+     "teamColor": "#4E4E50"
   }
 ]

@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -21,6 +23,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.currentState
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
@@ -39,13 +42,32 @@ object ConstructorWidget : GlanceAppWidget(), KoinComponent {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
+        val storedSettings = repository.getConstructorWidgetSettings(widgetId)
+
+        updateAppWidgetState(context, id) { prefs ->
+            val resolvedState = resolveConstructorWidgetState(
+                glanceConstructorId = prefs[stringPreferencesKey("constructor_id")] ?: "",
+                glanceTransparency = prefs[floatPreferencesKey("transparency")],
+                glanceBackgroundColor = prefs[intPreferencesKey("background_color")],
+                storedSettings = storedSettings
+            )
+
+            if (resolvedState.needsBackfill) {
+                prefs[stringPreferencesKey("constructor_id")] = resolvedState.constructorId
+                prefs[floatPreferencesKey("transparency")] = resolvedState.transparency
+                prefs[intPreferencesKey("background_color")] = resolvedState.backgroundColor
+                prefs[longPreferencesKey("last_update")] = System.currentTimeMillis()
+            }
+        }
 
         provideContent {
             val prefs = currentState<Preferences>()
-            val constructorId = prefs[stringPreferencesKey("constructor_id")] ?: ""
-            val transparency = prefs[floatPreferencesKey("transparency")] ?: 0.9f
-            val backgroundColor = prefs[androidx.datastore.preferences.core.intPreferencesKey("background_color")]
-                ?: 0xFF708090.toInt()
+            val resolvedState = resolveConstructorWidgetState(
+                glanceConstructorId = prefs[stringPreferencesKey("constructor_id")] ?: "",
+                glanceTransparency = prefs[floatPreferencesKey("transparency")],
+                glanceBackgroundColor = prefs[intPreferencesKey("background_color")],
+                storedSettings = storedSettings
+            )
 
             val settingsIntent = Intent(context, ConstructorWidgetSettingsActivity::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -53,16 +75,16 @@ object ConstructorWidget : GlanceAppWidget(), KoinComponent {
 
             var constructor by remember { mutableStateOf<Constructor?>(null) }
 
-            LaunchedEffect(constructorId) {
-                if (constructorId.isNotEmpty()) {
-                    constructor = repository.getConstructorById(constructorId)
+            LaunchedEffect(resolvedState.constructorId) {
+                if (resolvedState.constructorId.isNotEmpty()) {
+                    constructor = repository.getConstructorById(resolvedState.constructorId)
                 }
             }
 
             ConstructorWidgetContent(
                 constructor = constructor,
-                transparency = transparency,
-                backgroundColor = backgroundColor,
+                transparency = resolvedState.transparency,
+                backgroundColor = resolvedState.backgroundColor,
                 onClick = actionStartActivity(settingsIntent)
             )
         }

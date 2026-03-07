@@ -41,13 +41,13 @@
   },
   {
     "driverId": "hulkenberg",
-    "teamName": "Kick Sauber",
-    "teamColor": "#00C2B8"
+    "teamName": "Audi",
+    "teamColor": "#CE1E13"
   },
   {
     "driverId": "bortoleto",
-    "teamName": "Kick Sauber",
-    "teamColor": "#00C2B8"
+    "teamName": "Audi",
+    "teamColor": "#CE1E13"
   },
   {
     "driverId": "piastri",
@@ -71,13 +71,8 @@
   },
   {
     "driverId": "hadjar",
-    "teamName": "Racing Bulls",
-    "teamColor": "#1E41FF"
-  },
-  {
-    "driverId": "tsunoda",
-    "teamName": "Racing Bulls",
-    "teamColor": "#1E41FF"
+    "teamName": "Red Bull Racing",
+    "teamColor": "#13253E"
   },
   {
     "driverId": "lawson",
@@ -87,7 +82,7 @@
   {
     "driverId": "max_verstappen",
     "teamName": "Red Bull Racing",
-    "teamColor": "#0600EF"
+    "teamColor": "#13253E"
   },
   {
     "driverId": "albon",
@@ -96,8 +91,7 @@
   },
   {
     "driverId": "sainz",
-    "teamName": "Ferrari",
-    "teamColor": "#DC0000",
-    "imageUrl": "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png"
+    "teamName": "Williams",
+    "teamColor": "#005A8D"
   }
 ]

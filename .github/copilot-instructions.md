@@ -1,7 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Build Commands
 
 ```bash
@@ -12,6 +8,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew check                # Run all checks (lint + tests)
 ./gradlew clean                # Clean build cache
 ```
+
+## Testing Expectations
+
+- For every new feature, add or update automated tests before finalizing the change.
+- Prefer the smallest meaningful test scope first:
+	- Unit tests (`app/src/test/`) for business logic and ViewModel/repository behavior.
+	- Instrumented tests (`app/src/androidTest/`) only when Android framework/UI behavior must be validated.
+- Run relevant tests for the feature before handoff.
+- At minimum, run `./gradlew test`; when feature scope touches Android UI/integration behavior, also run `./gradlew connectedAndroidTest` when a device/emulator is available.
+- If tests cannot be run in the current environment, explicitly state what was not run and why.
 
 ## Project Overview
 

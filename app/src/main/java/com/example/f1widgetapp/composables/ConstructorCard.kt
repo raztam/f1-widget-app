@@ -14,7 +14,6 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import com.example.f1widgetapp.R
@@ -42,9 +41,8 @@ fun ConstructorCard(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(androidx.glance.unit.ColorProvider(backgroundColorCompose))
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp),
-        contentAlignment = Alignment.TopCenter
+            .background(backgroundColorCompose),
+        contentAlignment = Alignment.TopStart
     ) {
         if (constructor == null) {
             Column(
@@ -66,66 +64,61 @@ fun ConstructorCard(
                 )
             }
         } else {
-            // Team color accent bar on the left
-            Row(
-                modifier = GlanceModifier.fillMaxSize()
+            // Team color rectangle fixed to the left, ~20% of card width
+            val accentWidth = 62.dp
+
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxHeight()
+                    .width(accentWidth)
+                    .background(constructor.teamColorCompose)
+            ) {}
+
+            // Team name / nationality centered independently from left rectangle
+            Column(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, end = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalAlignment = Alignment.Top
             ) {
-                Box(
-                    modifier = GlanceModifier
-                        .width(6.dp)
-                        .fillMaxHeight()
-                        .background(
-                            androidx.glance.unit.ColorProvider(
-                                constructor.teamColorCompose
-                            )
-                        )
-                ) {}
+                GlanceText(
+                    text = constructor.name ?: "",
+                    font = R.font.inter_24pt_extrabold,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
 
-                Spacer(modifier = GlanceModifier.width(8.dp))
+                GlanceText(
+                    text = constructor.nationality ?: "",
+                    font = R.font.inter_24pt_regular,
+                    fontSize = 14.sp,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
 
-                // Content column
-                Column(
-                    modifier = GlanceModifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    verticalAlignment = Alignment.Top
+            // Position and score
+            Box(
+                modifier = GlanceModifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Row(
+                    modifier = GlanceModifier.padding(start = 70.dp, bottom = 8.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    // Team name
                     GlanceText(
-                        text = constructor.name ?: "",
+                        text = "P${constructor.position ?: "-"}",
                         font = R.font.inter_24pt_extrabold,
                         fontSize = 20.sp,
                         color = Color.White
                     )
-
-                    // Nationality
+                    Spacer(modifier = GlanceModifier.width(4.dp))
                     GlanceText(
-                        text = constructor.nationality ?: "",
-                        font = R.font.inter_24pt_regular,
-                        fontSize = 14.sp,
-                        color = Color.White.copy(alpha = 0.7f)
+                        text = constructor.score ?: "",
+                        font = R.font.inter_24pt_extrabold,
+                        fontSize = 20.sp,
+                        color = constructor.teamColorCompose
                     )
-
-                    Spacer(modifier = GlanceModifier.height(4.dp))
-
-                    // Position and score
-                    Row(
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        GlanceText(
-                            text = "P${constructor.position ?: "-"}",
-                            font = R.font.inter_24pt_extrabold,
-                            fontSize = 20.sp,
-                            color = Color.White
-                        )
-                        Spacer(modifier = GlanceModifier.width(4.dp))
-                        GlanceText(
-                            text = constructor.score ?: "",
-                            font = R.font.inter_24pt_extrabold,
-                            fontSize = 20.sp,
-                            color = constructor.teamColorCompose
-                        )
-                    }
                 }
             }
         }

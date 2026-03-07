@@ -28,7 +28,8 @@
 
         <receiver
             android:name=".widgets.DriverWidgetReceiver"
-            android:exported="false">
+            android:exported="false"
+            android:label="Driver widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -41,7 +42,8 @@
         <!-- Constructor Widget Receiver -->
         <receiver
             android:name=".widgets.ConstructorWidgetReceiver"
-            android:exported="false">
+            android:exported="false"
+            android:label="Constructor widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -53,6 +55,7 @@
         <!-- Driver Standings Widget Receiver -->
         <receiver
             android:name=".widgets.DriverStandingsWidgetReceiver"
+            android:enabled="false"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

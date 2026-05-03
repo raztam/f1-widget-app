@@ -1,6 +1,6 @@
 # 🏎️ F1 Widget App
 
-A lightweight Android app that provides Formula 1 driver standings directly on your home screen — no need to open an app!  
+A lightweight Android app that provides Formula 1 driver standings directly on your home screen — no need to open an app!
 This app shows driver scores and championship positions, based on the latest available data, not real-time race updates (yet).
 
 ---
@@ -58,3 +58,9 @@ Clone the repo:
 
 ```bash
 git clone https://github.com/raztam/f1-widget-app.git
+```
+
+## 📜 License
+
+This project is licensed under the GNU General Public License v3.0.
+See the [LICENSE](LICENSE) file for the full text.

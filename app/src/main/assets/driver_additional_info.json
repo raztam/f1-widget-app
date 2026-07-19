@@ -5,7 +5,7 @@
     "teamColor": "#1E41FF"
   },
   {
-    "driverId": "doohan",
+    "driverId": "colapinto",
     "teamName": "Alpine",
     "teamColor": "#1E41FF"
   },
@@ -75,14 +75,19 @@
     "teamColor": "#13253E"
   },
   {
-    "driverId": "lawson",
-    "teamName": "Red Bull Racing",
-    "teamColor": "#0600EF"
-  },
-  {
     "driverId": "max_verstappen",
     "teamName": "Red Bull Racing",
     "teamColor": "#13253E"
+  },
+  {
+    "driverId": "lawson",
+    "teamName": "Racing Bulls",
+    "teamColor": "#1E41FF"
+  },
+  {
+    "driverId": "arvid_lindblad",
+    "teamName": "Racing Bulls",
+    "teamColor": "#1E41FF"
   },
   {
     "driverId": "albon",
@@ -93,5 +98,15 @@
     "driverId": "sainz",
     "teamName": "Williams",
     "teamColor": "#005A8D"
+  },
+  {
+    "driverId": "perez",
+    "teamName": "Cadillac",
+    "teamColor": "#4E4E50"
+  },
+  {
+    "driverId": "bottas",
+    "teamName": "Cadillac",
+    "teamColor": "#4E4E50"
   }
 ]

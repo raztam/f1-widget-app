@@ -9,5 +9,5 @@
     android:targetCellHeight="3"
     android:updatePeriodMillis="0"
     android:resizeMode="vertical"
-    android:description="@string/driver_standings_widget_description"
-    android:configure="com.example.f1widgetapp.activities.DriverStandingsWidgetSettingsActivity" />
+    android:description="@string/constructor_standings_widget_description"
+    android:configure="com.example.f1widgetapp.activities.ConstructorStandingsWidgetSettingsActivity" />

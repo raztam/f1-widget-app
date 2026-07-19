@@ -4,8 +4,10 @@ import android.content.Context
 import android.util.Log
 import com.example.f1widgetapp.data.api.ApiInterface
 import com.example.f1widgetapp.data.modals.Constructor
+import com.example.f1widgetapp.data.modals.ConstructorStandingsWidgetSettings
 import com.example.f1widgetapp.data.modals.ConstructorWidgetSettings
 import com.example.f1widgetapp.data.modals.Driver
+import com.example.f1widgetapp.data.modals.DriverStandingsWidgetSettings
 import com.example.f1widgetapp.data.modals.Race
 import com.example.f1widgetapp.data.modals.WidgetSettings
 import com.example.f1widgetapp.data.room.ConstructorDao
@@ -139,6 +141,81 @@ class Repository(
             }
         } else {
             ConstructorWidgetSettings()
+        }
+    }
+
+    override fun saveDriverStandingsWidgetSettings(settings: DriverStandingsWidgetSettings, widgetId: Int) {
+        val normalized = settings.copy(displayCount = settings.normalizedDisplayCount)
+        val gson = Gson()
+        val json = gson.toJson(normalized)
+        val sharedPreferences = context.getSharedPreferences("widget_driver_standings", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+
+        sharedPreferences
+            .edit()
+            .putString(key, json)
+            .commit()
+    }
+
+    override suspend fun getDriverStandingsWidgetSettings(widgetId: Int): DriverStandingsWidgetSettings {
+        val sharedPreferences = context.getSharedPreferences("widget_driver_standings", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+        val json = sharedPreferences.getString(key, null)
+
+        return if (json != null) {
+            try {
+                val gson = Gson()
+                val settings = gson.fromJson(json, DriverStandingsWidgetSettings::class.java)
+                settings.copy(displayCount = settings.normalizedDisplayCount)
+            } catch (e: Exception) {
+                Log.e("Repository", "Error parsing DriverStandingsWidgetSettings for widget $widgetId", e)
+                DriverStandingsWidgetSettings()
+            }
+        } else {
+            DriverStandingsWidgetSettings()
+        }
+    }
+
+    override fun saveConstructorStandingsWidgetSettings(
+        settings: ConstructorStandingsWidgetSettings,
+        widgetId: Int
+    ) {
+        val normalized = settings.copy(displayCount = settings.normalizedDisplayCount)
+        val gson = Gson()
+        val json = gson.toJson(normalized)
+        val sharedPreferences =
+            context.getSharedPreferences("widget_constructor_standings", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+
+        sharedPreferences
+            .edit()
+            .putString(key, json)
+            .commit()
+    }
+
+    override suspend fun getConstructorStandingsWidgetSettings(
+        widgetId: Int
+    ): ConstructorStandingsWidgetSettings {
+        val sharedPreferences =
+            context.getSharedPreferences("widget_constructor_standings", Context.MODE_PRIVATE)
+        val key = "widget_settings_$widgetId"
+        val json = sharedPreferences.getString(key, null)
+
+        return if (json != null) {
+            try {
+                val gson = Gson()
+                val settings = gson.fromJson(json, ConstructorStandingsWidgetSettings::class.java)
+                settings.copy(displayCount = settings.normalizedDisplayCount)
+            } catch (e: Exception) {
+                Log.e(
+                    "Repository",
+                    "Error parsing ConstructorStandingsWidgetSettings for widget $widgetId",
+                    e
+                )
+                ConstructorStandingsWidgetSettings()
+            }
+        } else {
+            ConstructorStandingsWidgetSettings()
         }
     }
 

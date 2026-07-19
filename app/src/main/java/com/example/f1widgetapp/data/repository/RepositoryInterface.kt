@@ -1,8 +1,10 @@
 package com.example.f1widgetapp.data.repository
 
 import com.example.f1widgetapp.data.modals.Constructor
+import com.example.f1widgetapp.data.modals.ConstructorStandingsWidgetSettings
 import com.example.f1widgetapp.data.modals.ConstructorWidgetSettings
 import com.example.f1widgetapp.data.modals.Driver
+import com.example.f1widgetapp.data.modals.DriverStandingsWidgetSettings
 import com.example.f1widgetapp.data.modals.Race
 import com.example.f1widgetapp.data.modals.WidgetSettings
 
@@ -28,4 +30,10 @@ interface RepositoryInterface {
 
     fun saveConstructorWidgetSettings(settings: ConstructorWidgetSettings, widgetId: Int)
     suspend fun getConstructorWidgetSettings(widgetId: Int): ConstructorWidgetSettings
+
+    fun saveDriverStandingsWidgetSettings(settings: DriverStandingsWidgetSettings, widgetId: Int)
+    suspend fun getDriverStandingsWidgetSettings(widgetId: Int): DriverStandingsWidgetSettings
+
+    fun saveConstructorStandingsWidgetSettings(settings: ConstructorStandingsWidgetSettings, widgetId: Int)
+    suspend fun getConstructorStandingsWidgetSettings(widgetId: Int): ConstructorStandingsWidgetSettings
 }

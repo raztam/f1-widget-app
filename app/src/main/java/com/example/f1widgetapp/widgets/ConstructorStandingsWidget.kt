@@ -19,14 +19,14 @@ import androidx.glance.currentState
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
-import com.example.f1widgetapp.activities.DriverStandingsWidgetSettingsActivity
+import com.example.f1widgetapp.activities.ConstructorStandingsWidgetSettingsActivity
 import com.example.f1widgetapp.composables.StandingsTable
 import com.example.f1widgetapp.data.repository.RepositoryInterface
 import com.example.f1widgetapp.workers.UpdateWidgetsWorker
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-object DriverStandingsWidget : GlanceAppWidget(), KoinComponent {
+object ConstructorStandingsWidget : GlanceAppWidget(), KoinComponent {
     private val repository: RepositoryInterface by inject()
 
     override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
@@ -36,16 +36,15 @@ object DriverStandingsWidget : GlanceAppWidget(), KoinComponent {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val widgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
         val storedCount = repository
-            .getDriverStandingsWidgetSettings(widgetId)
+            .getConstructorStandingsWidgetSettings(widgetId)
             .normalizedDisplayCount
 
-        val drivers = repository.getAllDrivers().sortedBy {
+        val constructors = repository.getAllConstructors().sortedBy {
             it.position?.toIntOrNull() ?: Int.MAX_VALUE
         }
-        val rows = StandingsWidgetPrefs.rowsFromDrivers(drivers, storedCount)
+        val rows = StandingsWidgetPrefs.rowsFromConstructors(constructors, storedCount)
 
         updateAppWidgetState(context, id) { prefs ->
-            // Always rewrite rows from DB when provideGlance runs.
             prefs[StandingsWidgetPrefs.displayCountKey] = storedCount
             prefs[StandingsWidgetPrefs.rowsJsonKey] = StandingsWidgetPrefs.encodeRows(rows)
             prefs[StandingsWidgetPrefs.lastUpdateKey] = System.currentTimeMillis()
@@ -53,8 +52,8 @@ object DriverStandingsWidget : GlanceAppWidget(), KoinComponent {
 
         Log.i(
             "StandingsWidget",
-            "DriverStandings provideGlance widgetId=$widgetId storedCount=$storedCount " +
-                "dbDrivers=${drivers.size} rows=${rows.size} first=${rows.firstOrNull()?.name}"
+            "ConstructorStandings provideGlance widgetId=$widgetId storedCount=$storedCount " +
+                "dbConstructors=${constructors.size} rows=${rows.size}"
         )
 
         provideContent {
@@ -67,15 +66,11 @@ object DriverStandingsWidget : GlanceAppWidget(), KoinComponent {
                 prefs[StandingsWidgetPrefs.rowsJsonKey]
             ).ifEmpty { rows }
 
-            Log.i(
-                "StandingsWidget",
-                "DriverStandings compose displayCount=$displayCount standingRows=${standingRows.size} lastUpdate=$lastUpdate"
-            )
-
-            val settingsIntent = Intent(context, DriverStandingsWidgetSettingsActivity::class.java).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
+            val settingsIntent =
+                Intent(context, ConstructorStandingsWidgetSettingsActivity::class.java).apply {
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
             val openSettings = actionStartActivity(settingsIntent)
 
             key(displayCount, lastUpdate, standingRows.size) {
@@ -90,9 +85,9 @@ object DriverStandingsWidget : GlanceAppWidget(), KoinComponent {
     }
 }
 
-class DriverStandingsWidgetReceiver : GlanceAppWidgetReceiver() {
+class ConstructorStandingsWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
-        get() = DriverStandingsWidget
+        get() = ConstructorStandingsWidget
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)

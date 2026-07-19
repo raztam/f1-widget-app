@@ -7,7 +7,9 @@ import com.example.f1widgetapp.data.api.F1InfoApi
 import com.example.f1widgetapp.data.repository.Repository
 import com.example.f1widgetapp.data.repository.RepositoryInterface
 import com.example.f1widgetapp.data.room.AppDatabase
+import com.example.f1widgetapp.viewmodels.ConstructorStandingsViewModel
 import com.example.f1widgetapp.viewmodels.ConstructorsViewModel
+import com.example.f1widgetapp.viewmodels.DriverStandingsViewModel
 import com.example.f1widgetapp.viewmodels.DriversViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -40,4 +42,6 @@ val appModule = module {
     // ViewModels
     viewModel { DriversViewModel(repository = get()) }
     viewModel { ConstructorsViewModel(repository = get()) }
+    viewModel { DriverStandingsViewModel(repository = get()) }
+    viewModel { ConstructorStandingsViewModel(repository = get()) }
 }

@@ -25,6 +25,16 @@
             android:exported="true"
             android:label="@string/title_activity_constructor_widget_settings"
             android:theme="@style/Theme.F1WidgetApp" />
+        <activity
+            android:name=".activities.DriverStandingsWidgetSettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_driver_standings_widget_settings"
+            android:theme="@style/Theme.F1WidgetApp" />
+        <activity
+            android:name=".activities.ConstructorStandingsWidgetSettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_constructor_standings_widget_settings"
+            android:theme="@style/Theme.F1WidgetApp" />
 
         <receiver
             android:name=".widgets.DriverWidgetReceiver"
@@ -55,14 +65,28 @@
         <!-- Driver Standings Widget Receiver -->
         <receiver
             android:name=".widgets.DriverStandingsWidgetReceiver"
-            android:enabled="false"
-            android:exported="false">
+            android:enabled="true"
+            android:exported="false"
+            android:label="Driver standings">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/driver_standings_widget_info" />
+        </receiver>
+
+        <!-- Constructor Standings Widget Receiver -->
+        <receiver
+            android:name=".widgets.ConstructorStandingsWidgetReceiver"
+            android:exported="false"
+            android:label="Constructor standings">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/constructor_standings_widget_info" />
         </receiver>
 
         <activity

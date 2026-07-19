@@ -5,9 +5,10 @@ import android.util.Log
 import androidx.work.*
 import androidx.glance.appwidget.updateAll
 import com.example.f1widgetapp.data.repository.RepositoryInterface
+import com.example.f1widgetapp.widgets.ConstructorStandingsWidget
 import com.example.f1widgetapp.widgets.ConstructorWidget
-import com.example.f1widgetapp.widgets.DriverWidget
 import com.example.f1widgetapp.widgets.DriverStandingsWidget
+import com.example.f1widgetapp.widgets.DriverWidget
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
@@ -46,6 +47,7 @@ class UpdateWidgetsWorker(
             DriverWidget.updateAll(applicationContext)
             DriverStandingsWidget.updateAll(applicationContext)
             ConstructorWidget.updateAll(applicationContext)
+            ConstructorStandingsWidget.updateAll(applicationContext)
 
             // Schedule next update based on next event (sprint or race)
             val nextEvent = repository.getNextRaceEvent()

@@ -72,7 +72,8 @@ class Repository(
             constructorDao.updateConstructorStandings(
                 constructorId = update.constructorId,
                 position = update.position,
-                points = update.points
+                points = update.points,
+                wins = update.wins
             )
         }
     }

@@ -2,7 +2,7 @@
 <appwidget-provider
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="200dp"
-    android:minHeight="45dp"
+    android:minHeight="110dp"
     android:updatePeriodMillis="0"
     android:resizeMode="none"
     android:configure="com.example.f1widgetapp.activities.ConstructorWidgetSettingsActivity" />

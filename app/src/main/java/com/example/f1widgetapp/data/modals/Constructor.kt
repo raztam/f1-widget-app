@@ -13,6 +13,7 @@ data class Constructor(
     val url: String? = null,
     val score: String? = null,
     val position: String? = null,
+    val wins: String? = null,
     val teamColor: String? = null
 ) {
     val teamColorCompose: Color

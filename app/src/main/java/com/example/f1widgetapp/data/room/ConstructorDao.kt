@@ -16,6 +16,6 @@ interface ConstructorDao {
     @Query("SELECT * FROM constructors WHERE constructorId = :id")
     suspend fun getConstructorById(id: String): Constructor?
 
-    @Query("UPDATE constructors SET position = :position, score = :points WHERE constructorId = :constructorId")
-    suspend fun updateConstructorStandings(constructorId: String, position: String, points: String)
+    @Query("UPDATE constructors SET position = :position, score = :points, wins = :wins WHERE constructorId = :constructorId")
+    suspend fun updateConstructorStandings(constructorId: String, position: String, points: String, wins: String)
 }

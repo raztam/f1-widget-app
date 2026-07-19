@@ -64,6 +64,7 @@ data class ConstructorTable(
 data class ConstructorStanding(
     val position: String,
     val points: String,
+    val wins: String? = null,
     @SerializedName("Constructor")
     val constructor: ConstructorReference
 )

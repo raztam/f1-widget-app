@@ -88,7 +88,8 @@ class Api : ApiInterface, KoinComponent {
                 ConstructorStandingUpdate(
                     constructorId = standing.constructor.constructorId,
                     position = standing.position ?: "DNF",
-                    points = standing.points ?: "0"
+                    points = standing.points ?: "0",
+                    wins = standing.wins ?: "0"
                 )
             }
         } catch (e: Exception) {

@@ -9,7 +9,7 @@ import com.example.f1widgetapp.data.modals.Driver
 import com.example.f1widgetapp.data.modals.Race
 
 
-@Database(entities = [Driver::class, Race::class, Constructor::class], version = 11)
+@Database(entities = [Driver::class, Race::class, Constructor::class], version = 12)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun driverDao(): DriverDao
     abstract fun raceDao(): RaceDao

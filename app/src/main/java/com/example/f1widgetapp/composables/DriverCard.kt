@@ -25,10 +25,6 @@ import androidx.glance.unit.ColorProvider
 import com.example.f1widgetapp.R
 import com.example.f1widgetapp.data.modals.Driver
 
-fun Context.getDrawableId(imageName: String): Int {
-    return resources.getIdentifier(imageName, "drawable", packageName)
-}
-
 @Composable
 fun DriverCard(
     driver: Driver?,
@@ -75,12 +71,7 @@ fun DriverCard(
             }
         } else {
             val teamColor = driver.teamColorCompose
-            val drawableId = try {
-                val id = context.getDrawableId(driver.driverId)
-                if (id == 0) null else id
-            } catch (_: Exception) {
-                null
-            }
+            val driverImage = context.loadDriverImage(driver.driverId)
 
             // Team accent stripe — flush left
             Box(
@@ -102,9 +93,9 @@ fun DriverCard(
                     .padding(start = 10.dp),
                 contentAlignment = Alignment.BottomStart
             ) {
-                if (drawableId != null) {
+                if (driverImage != null) {
                     Image(
-                        provider = ImageProvider(drawableId),
+                        provider = ImageProvider(driverImage),
                         contentDescription = "Driver photo",
                         contentScale = ContentScale.Fit,
                         modifier = GlanceModifier

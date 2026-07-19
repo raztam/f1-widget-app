@@ -6,26 +6,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
-import androidx.glance.layout.Box
-import androidx.glance.layout.Column
-import androidx.glance.layout.Spacer
-import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.height
-import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
-import androidx.glance.background
-import androidx.glance.layout.Row
-import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.padding
-import androidx.glance.layout.width
-import androidx.glance.text.FontWeight
-import com.example.f1widgetapp.data.modals.Driver
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.text.FontFamily
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.background
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.ContentScale
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.padding
+import androidx.glance.layout.width
+import androidx.glance.unit.ColorProvider
 import com.example.f1widgetapp.R
-
+import com.example.f1widgetapp.data.modals.Driver
 
 fun Context.getDrawableId(imageName: String): Int {
     return resources.getIdentifier(imageName, "drawable", packageName)
@@ -39,12 +37,10 @@ fun DriverCard(
     transparency: Float = 0.9f,
     backgroundColor: Int = 0xFF708090.toInt()
 ) {
-    // Calculate background color with transparency applied.
-    // The stored backgroundColor is ARGB; we keep its RGB and apply transparency to alpha.
-    val baseColorInt = backgroundColor
-    val baseRed = android.graphics.Color.red(baseColorInt)
-    val baseGreen = android.graphics.Color.green(baseColorInt)
-    val baseBlue = android.graphics.Color.blue(baseColorInt)
+    // Keep RGB from the stored ARGB color and apply the transparency slider to alpha.
+    val baseRed = android.graphics.Color.red(backgroundColor)
+    val baseGreen = android.graphics.Color.green(backgroundColor)
+    val baseBlue = android.graphics.Color.blue(backgroundColor)
     val alpha = (255 * transparency).toInt().coerceIn(0, 255)
     val backgroundColorCompose = Color(
         red = baseRed,
@@ -56,111 +52,131 @@ fun DriverCard(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(androidx.glance.unit.ColorProvider(backgroundColorCompose))
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp),
-        contentAlignment = androidx.glance.layout.Alignment.TopCenter
+            .background(ColorProvider(backgroundColorCompose))
     ) {
         if (driver == null) {
-            // Empty state
             Column(
                 modifier = GlanceModifier.fillMaxSize(),
-                horizontalAlignment = androidx.glance.layout.Alignment.CenterHorizontally,
-                verticalAlignment = androidx.glance.layout.Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 GlanceText(
                     text = "Click to select",
                     font = R.font.inter_24pt_regular,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = Color.White
                 )
                 GlanceText(
                     text = "a driver",
                     font = R.font.inter_24pt_extrabold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = Color.White
                 )
             }
         } else {
-            // Get driver image
+            val teamColor = driver.teamColorCompose
             val drawableId = try {
-                val id = context.getDrawableId(driver.driverId ?: "default_image")
+                val id = context.getDrawableId(driver.driverId)
                 if (id == 0) null else id
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 null
             }
 
-            // Driver Image with shadow - on the right
-            if (drawableId != null) {
+            // Team accent stripe — flush left
+            Box(
+                modifier = GlanceModifier.fillMaxSize(),
+                contentAlignment = Alignment.CenterStart
+            ) {
                 Box(
                     modifier = GlanceModifier
-                        .fillMaxSize()
-                        .padding(end = 12.dp),
-                    contentAlignment = androidx.glance.layout.Alignment.BottomEnd
-                ) {
-                    Image(
-                        provider = ImageProvider(drawableId),
-                        contentDescription = null,
-                        modifier = GlanceModifier
-                            .width(82.dp)
-                            .height(82.dp)
-                    )
+                        .width(10.dp)
+                        .fillMaxHeight()
+                        .background(ColorProvider(teamColor))
+                ) {}
+            }
 
-                    // Main image layer
+            // Driver portrait — left, overlapping the bottom bar
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxSize()
+                    .padding(start = 10.dp),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                if (drawableId != null) {
                     Image(
                         provider = ImageProvider(drawableId),
                         contentDescription = "Driver photo",
+                        contentScale = ContentScale.Fit,
                         modifier = GlanceModifier
-                            .width(82.dp)
-                            .height(82.dp)
+                            .width(110.dp)
+                            .fillMaxHeight()
                     )
                 }
             }
 
-            // Driver name - centered
-            Column(
+            // Driver name — upper area to the right of the portrait
+            Box(
                 modifier = GlanceModifier
-                    .fillMaxWidth()
-                    .padding(top = 2.dp, start = 65.dp),
-                horizontalAlignment = androidx.glance.layout.Alignment.Start,
-                verticalAlignment = androidx.glance.layout.Alignment.Top
+                    .fillMaxSize()
+                    .padding(start = 118.dp, top = 8.dp, end = 12.dp),
+                contentAlignment = Alignment.TopStart
             ) {
-                GlanceText(
-                    driver?.givenName ?: "",
-                    font = R.font.inter_24pt_regular,
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
-                GlanceText(
-                    text = driver?.familyName ?: "",
-                    font = R.font.inter_24pt_extrabold,
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
+                Column(horizontalAlignment = Alignment.Start) {
+                    GlanceText(
+                        text = (driver.givenName ?: "").uppercase(),
+                        font = R.font.inter_24pt_regular,
+                        fontSize = 13.sp,
+                        color = Color.White,
+                        letterSpacing = 0.06.sp
+                    )
+                    GlanceText(
+                        text = (driver.familyName ?: "").uppercase(),
+                        font = R.font.inter_24pt_extrabold,
+                        fontSize = 22.sp,
+                        color = Color.White,
+                        letterSpacing = 0.02.sp
+                    )
+                }
             }
 
-            // Position and score
+            // Stats row — bottom right (no black bar for now)
             Box(
                 modifier = GlanceModifier.fillMaxSize(),
-                contentAlignment = androidx.glance.layout.Alignment.BottomStart
+                contentAlignment = Alignment.BottomEnd
             ) {
                 Row(
-                    modifier = GlanceModifier
-                        .padding(start = 4.dp),
-                    horizontalAlignment = androidx.glance.layout.Alignment.Start
+                    modifier = GlanceModifier.padding(end = 8.dp, bottom = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     GlanceText(
-                        text = "P${driver?.position ?: "-"}",
+                        text = "P${driver.position ?: "-"}",
                         font = R.font.inter_24pt_extrabold,
-                        fontSize = 20.sp,
+                        fontSize = 15.sp,
                         color = Color.White
                     )
-                    Spacer(modifier = GlanceModifier.width(4.dp))
-                    GlanceText(
-                        text = driver?.score ?: "",
-                        font = R.font.inter_24pt_extrabold,
-                        fontSize = 20.sp,
-                        color = driver?.teamColorCompose ?: Color.White
-                    )
+                    Spacer(modifier = GlanceModifier.width(6.dp))
+                    // Points: thin team-color frame
+                    Box(
+                        modifier = GlanceModifier
+                            .cornerRadius(4.dp)
+                            .background(ColorProvider(teamColor))
+                            .padding(1.dp)
+                    ) {
+                        Box(
+                            modifier = GlanceModifier
+                                .cornerRadius(3.dp)
+                                .background(ColorProvider(backgroundColorCompose))
+                                .padding(horizontal = 7.dp, vertical = 2.dp)
+                        ) {
+                            GlanceText(
+                                text = "${driver.score ?: "0"} PTS",
+                                font = R.font.inter_24pt_extrabold,
+                                fontSize = 11.sp,
+                                color = Color.White,
+                                letterSpacing = 0.04.sp
+                            )
+                        }
+                    }
                 }
             }
         }
